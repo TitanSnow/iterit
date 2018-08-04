@@ -89,3 +89,66 @@ export const isIterator = function isIterator(obj) {
             |> is(obj)
     }
 } |> curry()
+
+export const keys = function keys(obj) {
+    const keysFunc = obj |> index('keys')
+    if (
+        keysFunc
+            |> typeOf()
+            |> is('function')
+    ) {
+        return keysFunc
+            |> bind(obj)
+            |> call()
+    } else if (
+        obj
+            |> typeOf()
+            |> is('object')
+    ) {
+        return Object.keys(obj) |> iter()
+    } else {
+        throw new TypeError('object has no "keys"')
+    }
+} |> curry()
+
+export const values = function values(obj) {
+    const valuesFunc = obj |> index('values')
+    if (
+        valuesFunc
+            |> typeOf()
+            |> is('function')
+    ) {
+        return valuesFunc
+            |> bind(obj)
+            |> call()
+    } else if (
+        obj
+            |> typeOf()
+            |> is('object')
+    ) {
+        return Object.values(obj) |> iter()
+    } else {
+        throw new TypeError('object has no "values"')
+    }
+} |> curry()
+
+export const entries = function entries(obj) {
+    const entriesFunc = obj |> index('entries')
+    if (
+        entriesFunc
+            |> typeOf()
+            |> is('function')
+    ) {
+        return entriesFunc
+            |> bind(obj)
+            |> call()
+    } else if (
+        obj
+            |> typeOf()
+            |> is('object')
+    ) {
+        return Object.entries(obj) |> iter()
+    } else {
+        throw new TypeError('object has no "entries"')
+    }
+} |> curry()
