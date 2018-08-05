@@ -46,11 +46,6 @@ export const getBound = function getBound(obj, key) {
         |> bind(obj)
 } |> curry()
 
-const getIteratorFactory = function getIteratorFactory(obj) {
-    return obj
-        |> getBound(Symbol.iterator)
-} |> curry()
-
 export const typeOf = function typeOf(obj) {
     return typeof obj
 } |> curry()
@@ -61,7 +56,7 @@ export const is = function is(a, b) {
 
 export const isIterable = function isIterable(obj) {
     return obj
-        |> getIteratorFactory()
+        |> index(Symbol.iterator)
         |> typeOf()
         |> is('function')
 } |> curry()
@@ -71,17 +66,17 @@ export const call = function call(func, ...args) {
 } |> curry()
 
 export const iter = function iter(obj) {
-    if (!(obj |> isIterable())) {
+    if (obj |> isIterable() |> not()) {
         throw new TypeError('object not iterable')
     } else {
         return obj
-            |> getIteratorFactory()
+            |> getBound(Symbol.iterator)
             |> call()
     }
 } |> curry()
 
 export const isIterator = function isIterator(obj) {
-    if (!(obj |> isIterable())) {
+    if (obj |> isIterable() |> not()) {
         return false
     } else {
         return obj
@@ -151,4 +146,27 @@ export const entries = function entries(obj) {
     } else {
         throw new TypeError('object has no "entries"')
     }
+} |> curry()
+
+export const isNullish = function isNullish(obj) {
+    return obj === null || obj === void 0
+} |> curry()
+
+export const not = function not(obj) {
+    return !obj
+} |> curry()
+
+export const map = function* map(it, func, thisArg) {
+    if (thisArg |> isNullish() |> not()) {
+        func = func |> bind(thisArg)
+    }
+    let idx = 0
+    for (const item of it) {
+        yield func(item, idx++, it)
+    }
+} |> curry()
+
+export const forEach = function forEach(it, func, thisArg) {
+    const r = it |> map(func, thisArg)
+    for (const item of r);
 } |> curry()
