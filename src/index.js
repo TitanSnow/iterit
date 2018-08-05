@@ -129,18 +129,12 @@ export const entries = function entries(obj) {
     }
 } |> curry()
 
-export const isNullish = function isNullish(obj) {
-    return obj === null || obj === void 0
-} |> curry()
-
 export const not = function not(obj) {
     return !obj
 } |> curry()
 
 export const map = function* map(it, func, thisArg) {
-    if (thisArg |> isNullish() |> not()) {
-        func = func |> bind(thisArg)
-    }
+    func = func |> bind(thisArg)
     let idx = 0
     for (const item of it) {
         yield func(item, idx++, it)
@@ -150,4 +144,12 @@ export const map = function* map(it, func, thisArg) {
 export const forEach = function forEach(it, func, thisArg) {
     const r = it |> map(func, thisArg)
     for (const item of r);
+} |> curry()
+
+export const filter = function* filter(it, func, thisArg) {
+    func = func |> bind(thisArg)
+    const r = it |> map((item, idx, it) => [item, func(item, idx, it)])
+    for (const [item, result] of r) {
+        if (result) yield item
+    }
 } |> curry()
