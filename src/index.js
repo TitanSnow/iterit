@@ -5,7 +5,7 @@ function decorateFunction(origin, decorator, length = 0) {
             // '+1', '-1', etc
             const originLength = origin.length
             const relativeLength = Number.parseInt(length)
-            originLength + relativeLength
+            Math.max(0, originLength + relativeLength)
         } else {
             length
         }
@@ -151,5 +151,13 @@ export const filter = function* filter(it, func, thisArg) {
     const r = it |> map((item, idx, it) => [item, func(item, idx, it)])
     for (const [item, result] of r) {
         if (result) yield item
+    }
+} |> curry()
+
+export const concat = function* concat(...its) {
+    for (const it of its) {
+        for (const item of it) {
+            yield item
+        }
     }
 } |> curry()
