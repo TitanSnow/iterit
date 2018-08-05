@@ -54,11 +54,16 @@ export const is = function is(a, b) {
     return Object.is(a, b)
 } |> curry()
 
+export const isTypeOf = function isTypeOf(obj, type) {
+    return obj
+        |> typeOf()
+        |> is(type)
+} |> curry()
+
 export const isIterable = function isIterable(obj) {
     return obj
         |> index(Symbol.iterator)
-        |> typeOf()
-        |> is('function')
+        |> isTypeOf('function')
 } |> curry()
 
 export const call = function call(func, ...args) {
@@ -87,19 +92,11 @@ export const isIterator = function isIterator(obj) {
 
 export const keys = function keys(obj) {
     const keysFunc = obj |> index('keys')
-    if (
-        keysFunc
-            |> typeOf()
-            |> is('function')
-    ) {
+    if (keysFunc |> isTypeOf('function')) {
         return keysFunc
             |> bind(obj)
             |> call()
-    } else if (
-        obj
-            |> typeOf()
-            |> is('object')
-    ) {
+    } else if (obj |> isTypeOf('object')) {
         return Object.keys(obj) |> iter()
     } else {
         throw new TypeError('object has no "keys"')
@@ -108,19 +105,11 @@ export const keys = function keys(obj) {
 
 export const values = function values(obj) {
     const valuesFunc = obj |> index('values')
-    if (
-        valuesFunc
-            |> typeOf()
-            |> is('function')
-    ) {
+    if (valuesFunc |> isTypeOf('function')) {
         return valuesFunc
             |> bind(obj)
             |> call()
-    } else if (
-        obj
-            |> typeOf()
-            |> is('object')
-    ) {
+    } else if (obj |> isTypeOf('object')) {
         return Object.values(obj) |> iter()
     } else {
         throw new TypeError('object has no "values"')
@@ -129,19 +118,11 @@ export const values = function values(obj) {
 
 export const entries = function entries(obj) {
     const entriesFunc = obj |> index('entries')
-    if (
-        entriesFunc
-            |> typeOf()
-            |> is('function')
-    ) {
+    if (entriesFunc |> isTypeOf('function')) {
         return entriesFunc
             |> bind(obj)
             |> call()
-    } else if (
-        obj
-            |> typeOf()
-            |> is('object')
-    ) {
+    } else if (obj |> isTypeOf('object')) {
         return Object.entries(obj) |> iter()
     } else {
         throw new TypeError('object has no "entries"')
