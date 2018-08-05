@@ -210,7 +210,11 @@ export const reduce = function reduce(it, func, initialValue) {
     let accumulator
     let idx
     if (initialValue |> isNullish()) {
-        accumulator = it |> next() |> index('value')
+        const first = it |> next()
+        if (first |> index('done')) {
+            throw new TypeError('reduce of done iterator with no initial value')
+        }
+        accumulator = first |> index('value')
         idx = 1
     } else {
         accumulator = initialValue
@@ -220,4 +224,20 @@ export const reduce = function reduce(it, func, initialValue) {
         accumulator = func(accumulator, item, idx++, it)
     }
     return accumulator
+} |> curry()
+
+export const every = function every(it, func, thisArg) {
+    func = func |> bind(thisArg)
+    for (const item of it) {
+        if (item |> func |> not()) return false
+    }
+    return true
+} |> curry()
+
+export const some = function some(it, func, thisArg) {
+    func = func |> bind(thisArg)
+    for (const item of it) {
+        if (item |> func) return true
+    }
+    return false
 } |> curry()
