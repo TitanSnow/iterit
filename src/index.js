@@ -304,3 +304,13 @@ export const includes = function includes(it, searchElement, fromIndex = 0) {
         |> drop(fromIndex)
         |> some(x => x |> sameValueZero(searchElement))
 } |> curry()
+
+export const indexOf = function indexOf(it, searchElement, fromIndex = 0) {
+    let result = fromIndex
+    it = it |> drop(fromIndex)
+    for (const item of it) {
+        if (item === searchElement) return result
+        ++result
+    }
+    return -1
+} |> curry()
