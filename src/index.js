@@ -54,6 +54,10 @@ export const is = function is(a, b) {
     return Object.is(a, b)
 } |> curry()
 
+export const sameValueZero = function sameValueZero(a, b) {
+    return (a |> is(b)) || a === b
+} |> curry()
+
 export const isTypeOf = function isTypeOf(obj, type) {
     return obj
         |> typeOf()
@@ -275,7 +279,7 @@ export const isSubclassOf = function isSubclassOf(subcls, classes) {
 const _flat = function* flat(it, depth = 1) {
     for (const item of it) {
         if (
-            (depth |> is(0) |> not()) &&
+            (depth |> sameValueZero(0) |> not()) &&
             (
                 (item |> isInstanceOf(CommonCollections)) ||
                 (item |> isIterator())
@@ -293,4 +297,10 @@ export const flatMap = function flatMap(it, func, thisArg) {
     return it
         |> map(func, thisArg)
         |> flat()
+} |> curry()
+
+export const includes = function includes(it, searchElement, fromIndex = 0) {
+    return it
+        |> drop(fromIndex)
+        |> some(x => x |> sameValueZero(searchElement))
 } |> curry()
