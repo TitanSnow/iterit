@@ -226,6 +226,13 @@
     "@babel/helper-plugin-utils" "7.0.0-beta.56"
     "@babel/plugin-syntax-do-expressions" "7.0.0-beta.56"
 
+"@babel/plugin-proposal-nullish-coalescing-operator@^7.0.0-beta.56":
+  version "7.0.0-beta.56"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-proposal-nullish-coalescing-operator/-/plugin-proposal-nullish-coalescing-operator-7.0.0-beta.56.tgz#e350051798665ceec8b9f40f5f7957f4fc0b7847"
+  dependencies:
+    "@babel/helper-plugin-utils" "7.0.0-beta.56"
+    "@babel/plugin-syntax-nullish-coalescing-operator" "7.0.0-beta.56"
+
 "@babel/plugin-proposal-object-rest-spread@7.0.0-beta.56":
   version "7.0.0-beta.56"
   resolved "https://registry.yarnpkg.com/@babel/plugin-proposal-object-rest-spread/-/plugin-proposal-object-rest-spread-7.0.0-beta.56.tgz#5a8b8c89e94155d766baacdf8e50ea7dead96741"
@@ -264,6 +271,12 @@
 "@babel/plugin-syntax-do-expressions@7.0.0-beta.56":
   version "7.0.0-beta.56"
   resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-do-expressions/-/plugin-syntax-do-expressions-7.0.0-beta.56.tgz#1b2025ca527eab30af118569adf1a295ef67ba74"
+  dependencies:
+    "@babel/helper-plugin-utils" "7.0.0-beta.56"
+
+"@babel/plugin-syntax-nullish-coalescing-operator@7.0.0-beta.56":
+  version "7.0.0-beta.56"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-nullish-coalescing-operator/-/plugin-syntax-nullish-coalescing-operator-7.0.0-beta.56.tgz#cfaf395ee529a3533b6cef66d67014dbef407d1d"
   dependencies:
     "@babel/helper-plugin-utils" "7.0.0-beta.56"
 

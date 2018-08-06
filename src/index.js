@@ -241,3 +241,21 @@ export const some = function some(it, func, thisArg) {
     }
     return false
 } |> curry()
+
+export const find = function find(it, func, thisArg) {
+    return it
+        |> filter(func, thisArg)
+        |> next()
+        |> index('value')
+} |> curry()
+
+export const findIndex = function findIndex(it, func, thisArg) {
+    func = func |> bind(thisArg)
+    let index
+    it |> find((item, idx, it) => {
+        const found = func(item, idx, it)
+        if (found) index = idx
+        return found
+    })
+    return index ?? -1
+} |> curry()
