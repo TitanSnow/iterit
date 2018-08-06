@@ -288,3 +288,9 @@ const _flat = function* flat(it, depth = 1) {
     }
 } |> curry()
 export const flat = _flat
+
+export const flatMap = function flatMap(it, func, thisArg) {
+    return it
+        |> map(func, thisArg)
+        |> flat()
+} |> curry()
