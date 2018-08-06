@@ -314,3 +314,15 @@ export const indexOf = function indexOf(it, searchElement, fromIndex = 0) {
     }
     return -1
 } |> curry()
+
+export const join = function join(it, separator) {
+    separator = separator ?? ','
+    it = it |> iter()
+    let result = ''
+    result += (it |> next() |> index('value')) ?? ''
+    for (const item of it) {
+        result += separator
+        result += item ?? ''
+    }
+    return result
+} |> curry()
