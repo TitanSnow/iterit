@@ -279,3 +279,20 @@ export const isSubclassOf = function isSubclassOf(subcls, classes) {
             return false
         })
 } |> curry()
+
+const _flat = function* flat(it, depth = 1) {
+    for (const item of it) {
+        if (
+            (depth |> is(0) |> not()) &&
+            (
+                (item |> isInstanceOf(CommonCollections)) ||
+                (item |> isIterator())
+            )
+        ) {
+            for (const subitem of item |> _flat(depth - 1)) {
+                yield subitem
+            }
+        } else yield item
+    }
+} |> curry()
+export const flat = _flat
