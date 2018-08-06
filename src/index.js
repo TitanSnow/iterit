@@ -157,7 +157,7 @@ export const next =
     return it.next()
   } |> curry()
 
-export const range = function* range(...args) {
+function parseSliceArg(...args) {
   let start, stop, step
   switch (args.length) {
     case 1:
@@ -175,6 +175,11 @@ export const range = function* range(...args) {
     default:
       throw new TypeError('invalid arguments')
   }
+  return [start, stop, step]
+}
+
+export const range = function* range(...args) {
+  const [start, stop, step] = parseSliceArg(...args)
   for (let i = start; step > 0 ? i < stop : i > stop; i += step) {
     yield i
   }
@@ -340,4 +345,35 @@ export const lastItem =
     let item
     for (item of it);
     return item
+  } |> curry()
+
+export const take =
+  function* take(it, stop) {
+    let idx = 0
+    for (const item of it) {
+      if (idx++ >= stop) break
+      yield item
+    }
+  } |> curry()
+
+export const step =
+  function* step(it, step) {
+    let idx = 0
+    for (const item of it) {
+      if (idx++ % step |> sameValueZero(0)) yield item
+    }
+  } |> curry()
+
+export const piece =
+  function piece(it, ...args) {
+    const [start, stop, stp] = parseSliceArg(...args)
+    return it
+      |> drop(start)
+      |> take(stop - start)
+      |> step(stp)
+  } |> curry()
+
+export const slice =
+  function slice(it, begin, end = void 0) {
+    return it |> piece(begin, end)
   } |> curry()
