@@ -64,9 +64,11 @@ export const isTypeOf =
 
 export const isIterable =
   function isIterable(obj) {
-    try{
+    try {
       return obj |> index(Symbol.iterator) |> isTypeOf('function')
-    } catch { return false }
+    } catch {
+      return false
+    }
   } |> curry()
 
 export const call =
@@ -262,7 +264,13 @@ const CommonCollections = [Array, TypedArray, Map, Set]
 
 const _isInstanceOf =
   function isInstanceOf(obj, classes) {
-    if (!(Array.isArray(classes) || (classes |> _isInstanceOf(CommonCollections)) || (classes |> isIterator()))) {
+    if (
+      !(
+        Array.isArray(classes) ||
+        (classes |> _isInstanceOf(CommonCollections)) ||
+        (classes |> isIterator())
+      )
+    ) {
       classes = [classes]
     }
     return classes |> some(cls => obj instanceof cls)
@@ -274,7 +282,12 @@ export const isSubclassOf =
     if (subcls |> isTypeOf('function') |> not()) {
       return false
     }
-    if (!((classes |> isInstanceOf(CommonCollections)) || (classes |> isIterator()))) {
+    if (
+      !(
+        (classes |> isInstanceOf(CommonCollections)) ||
+        (classes |> isIterator())
+      )
+    ) {
       classes = [classes]
     }
     return (
@@ -367,10 +380,7 @@ export const step =
 export const piece =
   function piece(it, ...args) {
     const [start, stop, stp] = parseSliceArg(...args)
-    return it
-      |> drop(start)
-      |> take(stop - start)
-      |> step(stp)
+    return it |> drop(start) |> take(stop - start) |> step(stp)
   } |> curry()
 
 export const slice =
