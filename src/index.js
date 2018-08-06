@@ -326,3 +326,9 @@ export const join = function join(it, separator) {
     }
     return result
 } |> curry()
+
+export const lastItem = function lastItem(it) {
+    let item
+    for (item of it);
+    return item;
+} |> curry()
