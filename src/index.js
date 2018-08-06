@@ -64,7 +64,9 @@ export const isTypeOf =
 
 export const isIterable =
   function isIterable(obj) {
-    return obj |> index(Symbol.iterator) |> isTypeOf('function')
+    try{
+      return obj |> index(Symbol.iterator) |> isTypeOf('function')
+    } catch { return false }
   } |> curry()
 
 export const call =
@@ -253,25 +255,27 @@ export const findIndex =
 const TypedArray = Object.getPrototypeOf(Int32Array)
 const CommonCollections = [Array, TypedArray, Map, Set]
 
-export const isInstanceOf =
+const _isInstanceOf =
   function isInstanceOf(obj, classes) {
-    if (!Array.isArray(classes)) {
+    if (!(Array.isArray(classes) || (classes |> _isInstanceOf(CommonCollections)) || (classes |> isIterator()))) {
       classes = [classes]
     }
     return classes |> some(cls => obj instanceof cls)
   } |> curry()
+export const isInstanceOf = _isInstanceOf
 
 export const isSubclassOf =
   function isSubclassOf(subcls, classes) {
     if (subcls |> isTypeOf('function') |> not()) {
       return false
     }
-    if (!Array.isArray(classes)) {
+    if (!((classes |> isInstanceOf(CommonCollections)) || (classes |> isIterator()))) {
       classes = [classes]
     }
     return (
       classes
       |> some(cls => {
+        if (cls |> is(null)) return true
         let cur = subcls
         while (cur |> is(null) |> not()) {
           if (cur |> is(cls)) return true
