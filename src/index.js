@@ -267,3 +267,37 @@ export const findIndex = function findIndex(it, func, thisArg) {
     })
     return index ?? -1
 } |> curry()
+
+const TypedArray = Object.getPrototypeOf(Int32Array)
+const CommonCollections = [
+    Array,
+    TypedArray,
+    Map,
+    Set,
+]
+
+export const isInstanceOf = function isInstanceOf(obj, classes) {
+    if (!Array.isArray(classes)) {
+        classes = [classes]
+    }
+    return classes
+        |> some(cls => obj instanceof cls)
+} |> curry()
+
+export const isSubclassOf = function isSubclassOf(subcls, classes) {
+    if (subcls |> isTypeOf('function') |> not()) {
+        return false
+    }
+    if (!Array.isArray(classes)) {
+        classes = [classes]
+    }
+    return classes
+        |> some(cls => {
+            let cur = subcls
+            while (cur |> is(null) |> not()) {
+                if (cur |> is(cls)) return true
+                cur = Object.getPrototypeOf(cur)
+            }
+            return false
+        })
+} |> curry()
