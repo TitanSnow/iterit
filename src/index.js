@@ -119,7 +119,7 @@ export const not = function not(obj) {
     return !obj
 } |> curry()
 
-export const map = function* map(it, func, thisArg) {
+export const map = function* map(it, func, thisArg = void 0) {
     func = func |> bind(thisArg)
     let idx = 0
     for (const item of it) {
@@ -127,12 +127,12 @@ export const map = function* map(it, func, thisArg) {
     }
 } |> curry()
 
-export const forEach = function forEach(it, func, thisArg) {
+export const forEach = function forEach(it, func, thisArg = void 0) {
     const r = it |> map(func, thisArg)
     for (const item of r);
 } |> curry()
 
-export const filter = function* filter(it, func, thisArg) {
+export const filter = function* filter(it, func, thisArg = void 0) {
     func = func |> bind(thisArg)
     const r = it |> map((item, idx, it) => [item, func(item, idx, it)])
     for (const [item, result] of r) {
@@ -208,7 +208,7 @@ export const reduce = function reduce(it, func, initialValue) {
     return accumulator
 } |> curry()
 
-export const every = function every(it, func, thisArg) {
+export const every = function every(it, func, thisArg = void 0) {
     func = func |> bind(thisArg)
     for (const item of it) {
         if (item |> func |> not()) return false
@@ -216,7 +216,7 @@ export const every = function every(it, func, thisArg) {
     return true
 } |> curry()
 
-export const some = function some(it, func, thisArg) {
+export const some = function some(it, func, thisArg = void 0) {
     func = func |> bind(thisArg)
     for (const item of it) {
         if (item |> func) return true
@@ -224,14 +224,14 @@ export const some = function some(it, func, thisArg) {
     return false
 } |> curry()
 
-export const find = function find(it, func, thisArg) {
+export const find = function find(it, func, thisArg = void 0) {
     return it
         |> filter(func, thisArg)
         |> next()
         |> index('value')
 } |> curry()
 
-export const findIndex = function findIndex(it, func, thisArg) {
+export const findIndex = function findIndex(it, func, thisArg = void 0) {
     func = func |> bind(thisArg)
     let index
     it |> find((item, idx, it) => {
@@ -293,7 +293,7 @@ const _flat = function* flat(it, depth = 1) {
 } |> curry()
 export const flat = _flat
 
-export const flatMap = function flatMap(it, func, thisArg) {
+export const flatMap = function flatMap(it, func, thisArg = void 0) {
     return it
         |> map(func, thisArg)
         |> flat()
