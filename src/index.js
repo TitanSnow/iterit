@@ -1,107 +1,103 @@
 function decorateFunction(origin, decorator, length = 0) {
-    const decorated = decorator(origin)
-    const decoratedLength = do {
-        if (typeof length === 'string') {
-            // '+1', '-1', etc
-            const originLength = origin.length
-            const relativeLength = Number.parseInt(length)
-            Math.max(0, originLength + relativeLength)
-        } else {
-            length
-        }
+  const decorated = decorator(origin)
+  const decoratedLength = do {
+    if (typeof length === 'string') {
+      // '+1', '-1', etc
+      const originLength = origin.length
+      const relativeLength = Number.parseInt(length)
+      Math.max(0, originLength + relativeLength)
+    } else {
+      length
     }
-    function modifyProperty(obj, prop, value) {
-        Object.defineProperty(
-            obj,
-            prop,
-            Object.assign(
-                Object.getOwnPropertyDescriptor(
-                    obj,
-                    prop
-                ),
-                { value }
-            )
-        )
-    }
-    modifyProperty(decorated, 'name', origin.name)
-    modifyProperty(decorated, 'length', decoratedLength)
-    return decorated
+  }
+  function modifyProperty(obj, prop, value) {
+    Object.defineProperty(
+      obj,
+      prop,
+      Object.assign(Object.getOwnPropertyDescriptor(obj, prop), { value })
+    )
+  }
+  modifyProperty(decorated, 'name', origin.name)
+  modifyProperty(decorated, 'length', decoratedLength)
+  return decorated
 }
 
 export function curry() {
-    return f => decorateFunction(f, f => (...args) => arg1 => f(arg1, ...args), '-1')
+  return f =>
+    decorateFunction(f, f => (...args) => arg1 => f(arg1, ...args), '-1')
 }
 
-export const index = function index(obj, key) {
+export const index =
+  function index(obj, key) {
     return obj[key]
-} |> curry()
+  } |> curry()
 
-export const bind = function bind(func, obj) {
+export const bind =
+  function bind(func, obj) {
     return func.bind(obj)
-} |> curry()
+  } |> curry()
 
-export const getBound = function getBound(obj, key) {
-    return obj
-        |> index(key)
-        |> bind(obj)
-} |> curry()
+export const getBound =
+  function getBound(obj, key) {
+    return obj |> index(key) |> bind(obj)
+  } |> curry()
 
-export const typeOf = function typeOf(obj) {
+export const typeOf =
+  function typeOf(obj) {
     return typeof obj
-} |> curry()
+  } |> curry()
 
-export const is = function is(a, b) {
+export const is =
+  function is(a, b) {
     return Object.is(a, b)
-} |> curry()
+  } |> curry()
 
-export const sameValueZero = function sameValueZero(a, b) {
+export const sameValueZero =
+  function sameValueZero(a, b) {
     return (a |> is(b)) || a === b
-} |> curry()
+  } |> curry()
 
-export const isTypeOf = function isTypeOf(obj, type) {
-    return obj
-        |> typeOf()
-        |> is(type)
-} |> curry()
+export const isTypeOf =
+  function isTypeOf(obj, type) {
+    return obj |> typeOf() |> is(type)
+  } |> curry()
 
-export const isIterable = function isIterable(obj) {
-    return obj
-        |> index(Symbol.iterator)
-        |> isTypeOf('function')
-} |> curry()
+export const isIterable =
+  function isIterable(obj) {
+    return obj |> index(Symbol.iterator) |> isTypeOf('function')
+  } |> curry()
 
-export const call = function call(func, ...args) {
+export const call =
+  function call(func, ...args) {
     return func(...args)
-} |> curry()
+  } |> curry()
 
-export const iter = function iter(obj) {
+export const iter =
+  function iter(obj) {
     if (obj |> isIterable() |> not()) {
-        throw new TypeError('object not iterable')
+      throw new TypeError('object not iterable')
     } else {
-        return obj
-            |> getBound(Symbol.iterator)
-            |> call()
+      return obj |> getBound(Symbol.iterator) |> call()
     }
-} |> curry()
+  } |> curry()
 
-export const isIterator = function isIterator(obj) {
+export const isIterator =
+  function isIterator(obj) {
     if (obj |> isIterable() |> not()) {
-        return false
+      return false
     } else {
-        return obj
-            |> iter()
-            |> is(obj)
+      return obj |> iter() |> is(obj)
     }
-} |> curry()
+  } |> curry()
 
 const _kve = (obj, tp) => {
-    if (obj |> isInstanceOf(CommonCollections)) {
-        return obj[tp]()
-    } else if (obj |> isTypeOf('object')) {
-        return Object[tp](obj) |> iter()
-    } else {
-        throw new TypeError(`object has no '${tp}'`)
-    }
+  if (obj |> isInstanceOf(CommonCollections)) {
+    return obj[tp]()
+  } else if (obj |> isTypeOf('object')) {
+    return Object[tp](obj) |> iter()
+  } else {
+    throw new TypeError(`object has no '${tp}'`)
+  }
 }
 
 export let keys = obj => _kve(obj, 'keys')
@@ -111,224 +107,233 @@ values = values |> curry()
 export let entries = obj => _kve(obj, 'entries')
 entries = entries |> curry()
 
-export const isNullish = function isNullish(obj) {
+export const isNullish =
+  function isNullish(obj) {
     return obj === null || obj === void 0
-} |> curry()
+  } |> curry()
 
-export const not = function not(obj) {
+export const not =
+  function not(obj) {
     return !obj
-} |> curry()
+  } |> curry()
 
-export const map = function* map(it, func, thisArg = void 0) {
+export const map =
+  function* map(it, func, thisArg = void 0) {
     func = func |> bind(thisArg)
     let idx = 0
     for (const item of it) {
-        yield func(item, idx++, it)
+      yield func(item, idx++, it)
     }
-} |> curry()
+  } |> curry()
 
-export const forEach = function forEach(it, func, thisArg = void 0) {
+export const forEach =
+  function forEach(it, func, thisArg = void 0) {
     const r = it |> map(func, thisArg)
     for (const item of r);
-} |> curry()
+  } |> curry()
 
-export const filter = function* filter(it, func, thisArg = void 0) {
+export const filter =
+  function* filter(it, func, thisArg = void 0) {
     func = func |> bind(thisArg)
     const r = it |> map((item, idx, it) => [item, func(item, idx, it)])
     for (const [item, result] of r) {
-        if (result) yield item
+      if (result) yield item
     }
-} |> curry()
+  } |> curry()
 
-export const concat = function* concat(...its) {
+export const concat =
+  function* concat(...its) {
     for (const it of its) {
-        for (const item of it) {
-            yield item
-        }
+      for (const item of it) {
+        yield item
+      }
     }
-} |> curry()
+  } |> curry()
 
-export const next = function next(it) {
+export const next =
+  function next(it) {
     return it.next()
-} |> curry()
+  } |> curry()
 
 export const range = function* range(...args) {
-    let start, stop, step
-    switch (args.length) {
-        case 1:
-            [stop] = args
-            start = 0
-            step = 1
-            break
-        case 2:
-            [start, stop] = args
-            step = 1
-            break
-        case 3:
-            [start, stop, step] = args
-            break
-        default:
-            throw new TypeError('invalid arguments')
-    }
-    for (let i = start; step > 0 ? i < stop : i > stop ; i += step) {
-        yield i
-    }
+  let start, stop, step
+  switch (args.length) {
+    case 1:
+      ;[stop] = args
+      start = 0
+      step = 1
+      break
+    case 2:
+      ;[start, stop] = args
+      step = 1
+      break
+    case 3:
+      ;[start, stop, step] = args
+      break
+    default:
+      throw new TypeError('invalid arguments')
+  }
+  for (let i = start; step > 0 ? i < stop : i > stop; i += step) {
+    yield i
+  }
 }
 
-export const times = function times(func, times) {
+export const times =
+  function times(func, times) {
     for (const i of range(times)) {
-        func()
+      func()
     }
-} |> curry()
+  } |> curry()
 
-export const drop = function drop(it, n = 1) {
+export const drop =
+  function drop(it, n = 1) {
     it = it |> iter()
     it |> getBound('next') |> times(n)
     return it
-} |> curry()
+  } |> curry()
 
-export const reduce = function reduce(it, func, initialValue) {
+export const reduce =
+  function reduce(it, func, initialValue) {
     it = it |> iter()
     let accumulator
     let idx
     if (initialValue |> isNullish()) {
-        const first = it |> next()
-        if (first |> index('done')) {
-            throw new TypeError('reduce of done iterator with no initial value')
-        }
-        accumulator = first |> index('value')
-        idx = 1
+      const first = it |> next()
+      if (first |> index('done')) {
+        throw new TypeError('reduce of done iterator with no initial value')
+      }
+      accumulator = first |> index('value')
+      idx = 1
     } else {
-        accumulator = initialValue
-        idx = 0
+      accumulator = initialValue
+      idx = 0
     }
     for (const item of it) {
-        accumulator = func(accumulator, item, idx++, it)
+      accumulator = func(accumulator, item, idx++, it)
     }
     return accumulator
-} |> curry()
+  } |> curry()
 
-export const every = function every(it, func, thisArg = void 0) {
+export const every =
+  function every(it, func, thisArg = void 0) {
     func = func |> bind(thisArg)
     for (const item of it) {
-        if (item |> func |> not()) return false
+      if (item |> func |> not()) return false
     }
     return true
-} |> curry()
+  } |> curry()
 
-export const some = function some(it, func, thisArg = void 0) {
+export const some =
+  function some(it, func, thisArg = void 0) {
     func = func |> bind(thisArg)
     for (const item of it) {
-        if (item |> func) return true
+      if (item |> func) return true
     }
     return false
-} |> curry()
+  } |> curry()
 
-export const find = function find(it, func, thisArg = void 0) {
-    return it
-        |> filter(func, thisArg)
-        |> next()
-        |> index('value')
-} |> curry()
+export const find =
+  function find(it, func, thisArg = void 0) {
+    return it |> filter(func, thisArg) |> next() |> index('value')
+  } |> curry()
 
-export const findIndex = function findIndex(it, func, thisArg = void 0) {
+export const findIndex =
+  function findIndex(it, func, thisArg = void 0) {
     func = func |> bind(thisArg)
     let index
-    it |> find((item, idx, it) => {
+    it
+      |> find((item, idx, it) => {
         const found = func(item, idx, it)
         if (found) index = idx
         return found
-    })
+      })
     return index ?? -1
-} |> curry()
+  } |> curry()
 
 const TypedArray = Object.getPrototypeOf(Int32Array)
-const CommonCollections = [
-    Array,
-    TypedArray,
-    Map,
-    Set,
-]
+const CommonCollections = [Array, TypedArray, Map, Set]
 
-export const isInstanceOf = function isInstanceOf(obj, classes) {
+export const isInstanceOf =
+  function isInstanceOf(obj, classes) {
     if (!Array.isArray(classes)) {
-        classes = [classes]
+      classes = [classes]
     }
-    return classes
-        |> some(cls => obj instanceof cls)
-} |> curry()
+    return classes |> some(cls => obj instanceof cls)
+  } |> curry()
 
-export const isSubclassOf = function isSubclassOf(subcls, classes) {
+export const isSubclassOf =
+  function isSubclassOf(subcls, classes) {
     if (subcls |> isTypeOf('function') |> not()) {
-        return false
+      return false
     }
     if (!Array.isArray(classes)) {
-        classes = [classes]
+      classes = [classes]
     }
-    return classes
-        |> some(cls => {
-            let cur = subcls
-            while (cur |> is(null) |> not()) {
-                if (cur |> is(cls)) return true
-                cur = Object.getPrototypeOf(cur)
-            }
-            return false
-        })
-} |> curry()
+    return (
+      classes
+      |> some(cls => {
+        let cur = subcls
+        while (cur |> is(null) |> not()) {
+          if (cur |> is(cls)) return true
+          cur = Object.getPrototypeOf(cur)
+        }
+        return false
+      })
+    )
+  } |> curry()
 
-const _flat = function* flat(it, depth = 1) {
+const _flat =
+  function* flat(it, depth = 1) {
     for (const item of it) {
-        if (
-            (depth |> sameValueZero(0) |> not()) &&
-            (
-                (item |> isInstanceOf(CommonCollections)) ||
-                (item |> isIterator())
-            )
-        ) {
-            for (const subitem of item |> _flat(depth - 1)) {
-                yield subitem
-            }
-        } else yield item
+      if (
+        (depth |> sameValueZero(0) |> not()) &&
+        ((item |> isInstanceOf(CommonCollections)) || (item |> isIterator()))
+      ) {
+        for (const subitem of item |> _flat(depth - 1)) {
+          yield subitem
+        }
+      } else yield item
     }
-} |> curry()
+  } |> curry()
 export const flat = _flat
 
-export const flatMap = function flatMap(it, func, thisArg = void 0) {
-    return it
-        |> map(func, thisArg)
-        |> flat()
-} |> curry()
+export const flatMap =
+  function flatMap(it, func, thisArg = void 0) {
+    return it |> map(func, thisArg) |> flat()
+  } |> curry()
 
-export const includes = function includes(it, searchElement, fromIndex = 0) {
-    return it
-        |> drop(fromIndex)
-        |> some(x => x |> sameValueZero(searchElement))
-} |> curry()
+export const includes =
+  function includes(it, searchElement, fromIndex = 0) {
+    return it |> drop(fromIndex) |> some(x => x |> sameValueZero(searchElement))
+  } |> curry()
 
-export const indexOf = function indexOf(it, searchElement, fromIndex = 0) {
+export const indexOf =
+  function indexOf(it, searchElement, fromIndex = 0) {
     let result = fromIndex
     it = it |> drop(fromIndex)
     for (const item of it) {
-        if (item === searchElement) return result
-        ++result
+      if (item === searchElement) return result
+      ++result
     }
     return -1
-} |> curry()
+  } |> curry()
 
-export const join = function join(it, separator) {
+export const join =
+  function join(it, separator) {
     separator = separator ?? ','
     it = it |> iter()
     let result = ''
     result += (it |> next() |> index('value')) ?? ''
     for (const item of it) {
-        result += separator
-        result += item ?? ''
+      result += separator
+      result += item ?? ''
     }
     return result
-} |> curry()
+  } |> curry()
 
-export const lastItem = function lastItem(it) {
+export const lastItem =
+  function lastItem(it) {
     let item
     for (item of it);
-    return item;
-} |> curry()
+    return item
+  } |> curry()
