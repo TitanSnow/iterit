@@ -137,6 +137,14 @@ export const not = function not(obj) {
     return !obj
 } |> curry()
 
+export const and = function and(it) {
+    return it |> every(x => x)
+} |> curry()
+
+export const or = function or(it) {
+    return it |> some(x => x)
+} |> curry()
+
 export const map = function* map(it, func, thisArg) {
     func = func |> bind(thisArg)
     let idx = 0
