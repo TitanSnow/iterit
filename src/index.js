@@ -90,44 +90,22 @@ export const isIterator = function isIterator(obj) {
     }
 } |> curry()
 
-export const keys = function keys(obj) {
-    const keysFunc = obj |> index('keys')
-    if (keysFunc |> isTypeOf('function')) {
-        return keysFunc
-            |> bind(obj)
-            |> call()
+const _kve = (obj, tp) => {
+    if (obj |> isInstanceOf(CommonCollections)) {
+        return obj[tp]()
     } else if (obj |> isTypeOf('object')) {
-        return Object.keys(obj) |> iter()
+        return Object[tp](obj) |> iter()
     } else {
-        throw new TypeError('object has no "keys"')
+        throw new TypeError(`object has no '${tp}'`)
     }
-} |> curry()
+}
 
-export const values = function values(obj) {
-    const valuesFunc = obj |> index('values')
-    if (valuesFunc |> isTypeOf('function')) {
-        return valuesFunc
-            |> bind(obj)
-            |> call()
-    } else if (obj |> isTypeOf('object')) {
-        return Object.values(obj) |> iter()
-    } else {
-        throw new TypeError('object has no "values"')
-    }
-} |> curry()
-
-export const entries = function entries(obj) {
-    const entriesFunc = obj |> index('entries')
-    if (entriesFunc |> isTypeOf('function')) {
-        return entriesFunc
-            |> bind(obj)
-            |> call()
-    } else if (obj |> isTypeOf('object')) {
-        return Object.entries(obj) |> iter()
-    } else {
-        throw new TypeError('object has no "entries"')
-    }
-} |> curry()
+export let keys = obj => _kve(obj, 'keys')
+keys = keys |> curry()
+export let values = obj => _kve(obj, 'values')
+values = values |> curry()
+export let entries = obj => _kve(obj, 'entries')
+entries = entries |> curry()
 
 export const isNullish = function isNullish(obj) {
     return obj === null || obj === void 0
