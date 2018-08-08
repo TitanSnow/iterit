@@ -7,3 +7,10 @@ extends:
 parser: babel-eslint
 rules:
   no-unused-vars: [off]
+overrides:
+  - files: ['*.test.js']
+    env:
+      node: true
+      jest: true
+    rules:
+      no-undef: [off]
