@@ -12,5 +12,3 @@ overrides:
     env:
       node: true
       jest: true
-    rules:
-      no-undef: [off]
