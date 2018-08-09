@@ -189,6 +189,8 @@ test('iter', () => {
 })
 
 test('isIterator', () => {
+  expect(it.isIterator.name).toBe('isIterator')
+  expect(it.isIterator.length).toBe(0)
   const a = [1, 2, 3]
   expect(a::it.isIterator()).toBe(false)
   expect(a::it.iter()::it.isIterator()).toBe(true)
@@ -213,6 +215,8 @@ test('isIterator', () => {
 })
 
 test('keys', () => {
+  expect(it.keys.name).toBe('keys')
+  expect(it.keys.length).toBe(0)
   const o = { awd: 'dwa', def: 'ccc' }
   expect(o::it.keys()::it.isIterator()).toBe(true)
   expect([...o::it.keys()]::it.sort()).toEqual(['awd', 'def']::it.sort())
@@ -234,6 +238,8 @@ test('keys', () => {
 })
 
 test('values', () => {
+  expect(it.values.name).toBe('values')
+  expect(it.values.length).toBe(0)
   const o = { awd: 'dwa', def: 'ccc' }
   expect(o::it.values()::it.isIterator()).toBe(true)
   expect([...o::it.values()]::it.sort()).toEqual(['dwa', 'ccc']::it.sort())
@@ -255,6 +261,8 @@ test('values', () => {
 })
 
 test('entries', () => {
+  expect(it.entries.name).toBe('entries')
+  expect(it.entries.length).toBe(0)
   const o = { awd: 'dwa', def: 'ccc' }
   expect(o::it.entries()::it.isIterator()).toBe(true)
   expect([...o::it.entries()]::it.sort()).toEqual(
@@ -280,14 +288,45 @@ test('entries', () => {
 })
 
 test('isNullish', () => {
+  expect(it.isNullish.name).toBe('isNullish')
+  expect(it.isNullish.length).toBe(0)
   expect(null::it.isNullish()).toBe(true)
   expect((void 0)::it.isNullish()).toBe(true)
   expect(false::it.isNullish()).toBe(false)
 })
 
 test('not', () => {
+  expect(it.not.name).toBe('not')
+  expect(it.not.length).toBe(0)
   expect(true::it.not()).toBe(false)
   expect(false::it.not()).toBe(true)
   expect(1::it.not()).toBe(false)
   expect(0::it.not()).toBe(true)
+})
+
+test('map', () => {
+  expect(it.map.name).toBe('map')
+  expect(it.map.length).toBe(1)
+  const a = [1, 2, 3]
+  const m2 = x => x * 2
+  expect(a::it.map(m2)::it.isIterator()).toBe(true)
+  expect([...a::it.map(m2)]).toEqual([2, 4, 6])
+  const etf = (item, idx) => [item, idx]
+  expect([...a::it.map(etf)]).toEqual([[1, 0], [2, 1], [3, 2]])
+  const slf = (item, idx, it) => it
+  expect([...a::it.map(slf)][2]).toBe(a)
+  let iter = a::it.iter()
+  expect([...iter::it.map(slf)][2]).toBe(iter)
+  iter = a::it.iter()
+  const skp = (item, idx, it) => it.next().value
+  expect([...iter::it.map(skp)]).toEqual([2, void 0])
+  const thr = () => {
+    throw 'awd'
+  }
+  expect(a::it.map(thr)::it.isIterator()).toBe(true)
+  expect(a::it.map(thr).next).toThrow()
+  function ths(x) {
+    return x * this
+  }
+  expect(a::it.map(ths, 2)::it.toArray()).toEqual([2, 4, 6])
 })

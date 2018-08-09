@@ -329,3 +329,7 @@ export function sort(compareFn = void 0) {
   r.sort(compareFn)
   return r
 }
+
+export function toArray() {
+  return [...this]
+}
