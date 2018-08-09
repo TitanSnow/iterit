@@ -56,7 +56,11 @@ export function isIterator() {
 
 function _kve(tp) {
   if (this::isInstanceOf(CommonCollections)) {
-    return this[tp]()
+    if (tp::is('values') && Array.isArray(this)) {
+      return this::iter()
+    } else {
+      return this[tp]()
+    }
   } else if (this::isTypeOf('object')) {
     return Object[tp](this)::iter()
   } else {
@@ -316,4 +320,10 @@ export function piece(...args) {
 
 export function slice(begin, end = void 0) {
   return this::piece(begin, end)
+}
+
+export function sort(compareFn = void 0) {
+  const r = [...this]
+  r.sort(compareFn)
+  return r
 }
