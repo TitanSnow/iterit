@@ -63,8 +63,7 @@ test('typeOf', () => {
   expect(Symbol()::it.typeOf()).toBe('symbol')
   expect(null::it.typeOf()).toBe('object')
   expect(1::it.typeOf()).toBe('number')
-  const dwa = void 0
-  expect(dwa::it.typeOf()).toBe('undefined')
+  expect((void 0)::it.typeOf()).toBe('undefined')
   let awd
   expect(awd::it.typeOf()).toBe('undefined')
   expect(true::it.typeOf()).toBe('boolean')
@@ -73,48 +72,42 @@ test('typeOf', () => {
 test('is', () => {
   expect(it.is.name).toBe('is')
   expect(it.is.length).toBe(1)
-  const undefined = void 0
-  expect(undefined::it.is(undefined)).toBe(true)
+  expect((void 0)::it.is(void 0)).toBe(true)
   expect(null::it.is(null)).toBe(true)
   expect(true::it.is(true)).toBe(true)
   expect('foo'::it.is('foo')).toBe(true)
   expect(0::it.is(0)).toBe(true)
-  const p0 = +0
-  const n0 = -0
-  expect(p0::it.is(-0)).toBe(false)
-  expect(p0::it.is(0)).toBe(true)
-  expect(n0::it.is(0)).toBe(false)
+  expect((+0)::it.is(-0)).toBe(false)
+  expect((+0)::it.is(0)).toBe(true)
+  expect((-0)::it.is(0)).toBe(false)
   expect(0::it.is(false)).toBe(false)
   expect(''::it.is(false)).toBe(false)
   expect('0'::it.is(0)).toBe(false)
   expect('17'::it.is(17)).toBe(false)
   expect([1, 2]::it.is('1,2')).toBe(false)
   expect(new String('foo')::it.is('foo')).toBe(false)
-  expect(null::it.is(undefined)).toBe(false)
+  expect(null::it.is(void 0)).toBe(false)
   expect(NaN::it.is(NaN)).toBe(true)
 })
 
 test('sameValueZero', () => {
   expect(it.sameValueZero.name).toBe('sameValueZero')
   expect(it.sameValueZero.length).toBe(1)
-  const undefined = void 0
-  expect(undefined::it.sameValueZero(undefined)).toBe(true)
+  expect((void 0)::it.sameValueZero(void 0)).toBe(true)
   expect(null::it.sameValueZero(null)).toBe(true)
   expect(true::it.sameValueZero(true)).toBe(true)
   expect('foo'::it.sameValueZero('foo')).toBe(true)
   expect(0::it.sameValueZero(0)).toBe(true)
-  const p0 = +0
-  const n0 = -0
-  expect(p0::it.sameValueZero(-0)).toBe(true)
-  expect(p0::it.sameValueZero(0)).toBe(true)
-  expect(n0::it.sameValueZero(0)).toBe(true)
+  expect((+0)::it.sameValueZero(-0)).toBe(true)
+  expect((+0)::it.sameValueZero(0)).toBe(true)
+  expect((-0)::it.sameValueZero(0)).toBe(true)
   expect(0::it.sameValueZero(false)).toBe(false)
   expect(''::it.sameValueZero(false)).toBe(false)
   expect('0'::it.sameValueZero(0)).toBe(false)
   expect('17'::it.sameValueZero(17)).toBe(false)
   expect([1, 2]::it.sameValueZero('1,2')).toBe(false)
   expect(new String('foo')::it.sameValueZero('foo')).toBe(false)
-  expect(null::it.sameValueZero(undefined)).toBe(false)
+  expect(null::it.sameValueZero(void 0)).toBe(false)
   expect(NaN::it.sameValueZero(NaN)).toBe(true)
 })
 
@@ -126,8 +119,7 @@ test('isTypeOf', () => {
   expect(Symbol()::it.isTypeOf('symbol')).toBe(true)
   expect(null::it.isTypeOf('object')).toBe(true)
   expect(1::it.isTypeOf('number')).toBe(true)
-  const dwa = void 0
-  expect(dwa::it.isTypeOf('undefined')).toBe(true)
+  expect((void 0)::it.isTypeOf('undefined')).toBe(true)
   let awd
   expect(awd::it.isTypeOf('undefined')).toBe(true)
   expect(true::it.isTypeOf('boolean')).toBe(true)
@@ -138,8 +130,7 @@ test('isIterable', () => {
   expect(it.isIterable.name).toBe('isIterable')
   expect(it.isIterable.length).toBe(0)
   expect({}::it.isIterable()).toBe(false)
-  const undefined = void 0
-  expect(undefined::it.isIterable()).toBe(false)
+  expect((void 0)::it.isIterable()).toBe(false)
   expect(null::it.isIterable()).toBe(false)
   class C {}
   const o = new C()
