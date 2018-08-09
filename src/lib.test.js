@@ -1,4 +1,4 @@
-import * as it from './index'
+import * as it from './lib'
 
 test('index', () => {
   expect(it.index.name).toBe('index')

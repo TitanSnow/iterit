@@ -1,4 +1,5 @@
 module.exports = {
   coverageDirectory: "coverage",
-  testEnvironment: "node"
+  testEnvironment: "node",
+  testPathIgnorePatterns: ["<rootDir>/node_modules/", "<rootDir>/lib/"]
 };
