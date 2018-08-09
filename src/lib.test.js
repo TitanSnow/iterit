@@ -278,3 +278,16 @@ test('entries', () => {
   expect(1::it.entries).toThrow()
   expect(sb::it.entries).toThrow()
 })
+
+test('isNullish', () => {
+  expect(null::it.isNullish()).toBe(true)
+  expect((void 0)::it.isNullish()).toBe(true)
+  expect(false::it.isNullish()).toBe(false)
+})
+
+test('not', () => {
+  expect(true::it.not()).toBe(false)
+  expect(false::it.not()).toBe(true)
+  expect(1::it.not()).toBe(false)
+  expect(0::it.not()).toBe(true)
+})
