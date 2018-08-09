@@ -143,11 +143,13 @@ function parseSliceArg(...args) {
   return [start, stop, step]
 }
 
-export function* range(...args) {
-  const [start, stop, step] = parseSliceArg(...args)
-  for (let i = start; step > 0 ? i < stop : i > stop; i += step) {
-    yield i
-  }
+export const range = (...args) => {
+  return (function*() {
+    const [start, stop, step] = parseSliceArg(...args)
+    for (let i = start; step > 0 ? i < stop : i > stop; i += step) {
+      yield i
+    }
+  })()
 }
 
 export function times(times) {

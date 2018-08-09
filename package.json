@@ -25,5 +25,8 @@
     "build": "babel src -d lib",
     "lint": "eslint src",
     "test": "jest"
+  },
+  "dependencies": {
+    "is-arrow-function": "^2.0.3"
   }
 }
