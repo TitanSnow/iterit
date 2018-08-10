@@ -311,6 +311,7 @@ test('map', () => {
   const m2 = x => x * 2
   expect(a::it.map(m2)::it.isIterator()).toBe(true)
   expect([...a::it.map(m2)]).toEqual([2, 4, 6])
+  expect([...a::it.iter()::it.map(m2)]).toEqual([2, 4, 6])
   const etf = (item, idx) => [item, idx]
   expect([...a::it.map(etf)]).toEqual([[1, 0], [2, 1], [3, 2]])
   const slf = (item, idx, it) => it
@@ -329,4 +330,49 @@ test('map', () => {
     return x * this
   }
   expect(a::it.map(ths, 2)::it.toArray()).toEqual([2, 4, 6])
+})
+
+test('forEach', () => {
+  expect(it.forEach.name).toBe('forEach')
+  expect(it.forEach.length).toBe(1)
+  const a = [1, 2, 3]
+  let times = 0
+  const tru = () => {
+    ++times
+    return true
+  }
+  expect(a::it.forEach(tru)).toBe(void 0)
+  expect(times).toBe(3)
+  const fls = () => {
+    --times
+    return false
+  }
+  expect(a::it.forEach(fls)).toBe(void 0)
+  expect(times).toBe(0)
+  let rst = []
+  ;a::it.forEach((item, idx, it) => rst.push([item, idx, it]))
+  rst.forEach((item, idx) => {
+    expect(item[0]).toBe(a[idx])
+    expect(item[1]).toBe(idx)
+    expect(item[2]).toBe(a)
+  })
+  rst = []
+  const iter = a::it.iter()
+  ;iter::it.forEach((item, idx, it) => rst.push([item, idx, it]))
+  rst.forEach((item, idx) => {
+    expect(item[0]).toBe(a[idx])
+    expect(item[1]).toBe(idx)
+    expect(item[2]).toBe(iter)
+  })
+  expect(iter.next().done).toBe(true)
+  ;iter::it.forEach(() => {
+    throw 'awd'
+  })
+  rst = []
+  const thr = x => {
+    rst.push(x)
+    if (x >= 2) throw 'awd'
+  }
+  expect(() => a::it.forEach(thr)).toThrow()
+  expect(rst).toEqual([1, 2])
 })
