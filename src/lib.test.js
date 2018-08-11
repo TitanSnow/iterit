@@ -469,3 +469,20 @@ test('times', () => {
   ;5::it.times(() => ++times)
   expect(times).toBe(5)
 })
+
+test('drop', () => {
+  expect(it.drop.name).toBe('drop')
+  expect(it.drop.length).toBe(0)
+  const a = [1, 2, 3, 4, 5]
+  expect(a::it.drop()::it.isIterator()).toBe(true)
+  expect(a::it.drop()::it.toArray()).toEqual([2, 3, 4, 5])
+  expect(a::it.drop(2)::it.toArray()).toEqual([3, 4, 5])
+  const iter = a::it.iter()
+  expect(
+    iter
+      ::it.drop()
+      ::it.drop(2)
+      ::it.toArray()
+  ).toEqual([4, 5])
+  expect(a::it.drop(0)::it.toArray()).toEqual([1, 2, 3, 4, 5])
+})

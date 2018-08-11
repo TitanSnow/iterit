@@ -170,7 +170,8 @@ export function times(func) {
 }
 
 export function drop(n = 1) {
-  const it = this::iter()::it.next::repeat(n)
+  const it = this::iter()
+  ;it::next::repeat(n)
   return it
 }
 
