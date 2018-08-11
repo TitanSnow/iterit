@@ -157,20 +157,20 @@ Object.defineProperty(
   Object.assign(Object.getOwnPropertyDescriptor(range, 'length'), { value: 1 })
 )
 
-export function times(times) {
+export function repeat(times) {
   for (const i of range(times)) {
     this()
   }
 }
 
-export function repeat(func) {
+export function times(func) {
   for (const i of range(this)) {
     func()
   }
 }
 
 export function drop(n = 1) {
-  const it = this::iter()::it.next::times(n)
+  const it = this::iter()::it.next::repeat(n)
   return it
 }
 
