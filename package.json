@@ -28,5 +28,8 @@
   },
   "dependencies": {
     "is-arrow-function": "^2.0.3"
+  },
+  "engines": {
+    "node": "^8.11.0 || >=10"
   }
 }
