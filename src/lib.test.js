@@ -1,4 +1,5 @@
 import * as it from './lib'
+import isArrowFunction from 'is-arrow-function'
 
 test('index', () => {
   expect(it.index.name).toBe('index')
@@ -369,10 +370,86 @@ test('forEach', () => {
     throw 'awd'
   })
   rst = []
-  const thr = x => {
-    rst.push(x)
+  function thr(x) {
+    this.push(x)
     if (x >= 2) throw 'awd'
   }
-  expect(() => a::it.forEach(thr)).toThrow()
+  expect(() => a::it.forEach(thr, rst)).toThrow()
   expect(rst).toEqual([1, 2])
+})
+
+test('filter', () => {
+  expect(it.filter.name).toBe('filter')
+  expect(it.filter.length).toBe(1)
+  const a = [1, 2, 3, 4, 5, 6]
+  expect(a::it.filter(x => x % 2)::it.isIterator()).toBe(true)
+  expect(a::it.filter(x => x % 2)::it.toArray()).toEqual([1, 3, 5])
+  expect(
+    a
+      ::it.filter(function(x) {
+        return x % this
+      }, 3)
+      ::it.toArray()
+  ).toEqual([1, 2, 4, 5])
+  const iter = a::it.iter()
+  let r
+  const idxs = []
+  expect(
+    iter
+      ::it.filter(function(x, idx, it) {
+        this.push(idx)
+        r = it
+        return x % 2
+      }, idxs)
+      ::it.toArray()
+  ).toEqual([1, 3, 5])
+  expect(r).toBe(iter)
+  expect(idxs).toEqual([0, 1, 2, 3, 4, 5])
+})
+
+test('concat', () => {
+  expect(it.concat.name).toBe('concat')
+  expect(it.concat.length).toBe(0)
+  const a = () => it.range(10)
+  const b = () => it.range(10, 20)
+  const c = () => it.range(20, 30)
+  const rst = it.range(30)::it.toArray()
+  expect(
+    a()
+      ::it.concat(b(), c())
+      ::it.isIterator()
+  ).toBe(true)
+  expect(
+    a()
+      ::it.concat(b(), c())
+      ::it.toArray()
+  ).toEqual(rst)
+  expect([]::it.concat(a(), b(), c())::it.toArray()).toEqual(rst)
+  expect(
+    (function*() {})()
+      ::it.concat(a(), b(), c())
+      ::it.toArray()
+  ).toEqual(rst)
+})
+
+test('next', () => {
+  expect(it.next.name).toBe('next')
+  expect(it.next.length).toBe(0)
+  const a = [1, 2, 3]
+  expect(a::it.iter()::it.next()).toEqual(a::it.iter().next())
+  expect(a::it.next).toThrow()
+})
+
+test('range', () => {
+  expect(it.range.name).toBe('range')
+  expect(it.range.length).toBe(1)
+  expect(isArrowFunction(it.range)).toBeTruthy()
+  expect(it.range).toThrow(TypeError)
+  expect(it.range(10)::it.isIterator()).toBe(true)
+  expect(it.range(10)::it.toArray()).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+  expect(it.range(-10)::it.toArray()).toEqual([])
+  expect(it.range(2, 5)::it.toArray()).toEqual([2, 3, 4])
+  expect(it.range(2, 8, 2)::it.toArray()).toEqual([2, 4, 6])
+  expect(it.range(8, 2, -2)::it.toArray()).toEqual([8, 6, 4])
+  expect(it.range(2, 8, -2)::it.toArray()).toEqual([])
 })

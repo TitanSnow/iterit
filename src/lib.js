@@ -144,13 +144,18 @@ function parseSliceArg(...args) {
 }
 
 export const range = (...args) => {
+  const [start, stop, step] = parseSliceArg(...args)
   return (function*() {
-    const [start, stop, step] = parseSliceArg(...args)
     for (let i = start; step > 0 ? i < stop : i > stop; i += step) {
       yield i
     }
   })()
 }
+Object.defineProperty(
+  range,
+  'length',
+  Object.assign(Object.getOwnPropertyDescriptor(range, 'length'), { value: 1 })
+)
 
 export function times(times) {
   for (const i of range(times)) {
