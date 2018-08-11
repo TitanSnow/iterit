@@ -522,3 +522,67 @@ test('reduce', () => {
   expect(idxs).toEqual([0, 1, 2])
   expect(its[0]).toBe(iter)
 })
+
+test('every', () => {
+  expect(it.every.name).toBe('every')
+  expect(it.every.length).toBe(1)
+  expect([1, 3, 5, 7]::it.every(x => x % 2)).toBe(true)
+  let times = 0
+  expect(
+    [1, 3, 0, 7]::it.every(function(x) {
+      ++times
+      return x % this
+    }, 2)
+  ).toBe(false)
+  expect(times).toBe(3)
+})
+
+test('some', () => {
+  expect(it.some.name).toBe('some')
+  expect(it.some.length).toBe(1)
+  expect([1, 3, 5, 7]::it.some(x => (x % 2) - 1)).toBe(false)
+  let times = 0
+  expect(
+    [1, 3, 0, 7]::it.some(function(x) {
+      ++times
+      return (x % this) - 1
+    }, 2)
+  ).toBe(true)
+  expect(times).toBe(3)
+})
+
+test('find', () => {
+  expect(it.find.name).toBe('find')
+  expect(it.find.length).toBe(1)
+  let times = 0
+  expect(
+    [2, 3, 4, 5]::it.find(x => {
+      ++times
+      return x % 2
+    })
+  ).toBe(3)
+  expect(times).toBe(2)
+  expect(
+    [2, 4, 6, 8]::it.find(function(x) {
+      return x % this
+    }, 2)
+  ).toBeUndefined()
+})
+
+test('findIndex', () => {
+  expect(it.findIndex.name).toBe('findIndex')
+  expect(it.findIndex.length).toBe(1)
+  let times = 0
+  expect(
+    [2, 3, 4, 5]::it.findIndex(x => {
+      ++times
+      return x % 2
+    })
+  ).toBe(1)
+  expect(times).toBe(2)
+  expect(
+    [2, 4, 6, 8]::it.findIndex(function(x) {
+      return x % this
+    }, 2)
+  ).toBe(-1)
+})
