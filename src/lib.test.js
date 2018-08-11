@@ -586,3 +586,32 @@ test('findIndex', () => {
     }, 2)
   ).toBe(-1)
 })
+
+test('isInstanceOf', () => {
+  expect(it.isInstanceOf.name).toBe('isInstanceOf')
+  expect(it.isInstanceOf.length).toBe(0)
+  class C {}
+  class D extends C {}
+  class E extends C {}
+  const o = new D()
+  expect(o::it.isInstanceOf(D)).toBe(true)
+  expect(o::it.isInstanceOf(C)).toBe(true)
+  expect(o::it.isInstanceOf(C, D)).toBe(true)
+  expect(o::it.isInstanceOf(E)).toBe(false)
+  expect(o::it.isInstanceOf(E, C)).toBe(true)
+})
+
+test('isSubclassOf', () => {
+  expect(it.isSubclassOf.name).toBe('isSubclassOf')
+  expect(it.isSubclassOf.length).toBe(0)
+  class C {}
+  class D extends C {}
+  class E extends C {}
+  expect(D::it.isSubclassOf(D)).toBe(true)
+  expect(D::it.isSubclassOf(C)).toBe(true)
+  expect(D::it.isSubclassOf(C, D)).toBe(true)
+  expect(D::it.isSubclassOf(E)).toBe(false)
+  expect(D::it.isSubclassOf(E, C)).toBe(true)
+  expect(null::it.isSubclassOf(C)).toBe(false)
+  expect(C::it.isSubclassOf(null)).toBe(true)
+})

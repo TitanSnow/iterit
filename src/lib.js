@@ -55,7 +55,7 @@ export function isIterator() {
 }
 
 function _kve(tp) {
-  if (this::isInstanceOf(CommonCollections)) {
+  if (this::isInstanceOf(...CommonCollections)) {
     if (tp::is('values') && Array.isArray(this)) {
       return this::iter()
     } else {
@@ -230,25 +230,13 @@ export function findIndex(func, thisArg = void 0) {
 const TypedArray = Object.getPrototypeOf(Int32Array)
 const CommonCollections = [Array, TypedArray, Map, Set]
 
-export function isInstanceOf(classes) {
-  if (
-    !(
-      Array.isArray(classes) ||
-      classes::isInstanceOf(CommonCollections) ||
-      classes::isIterator()
-    )
-  ) {
-    classes = [classes]
-  }
+export function isInstanceOf(...classes) {
   return classes::some(cls => this instanceof cls)
 }
 
-export function isSubclassOf(classes) {
+export function isSubclassOf(...classes) {
   if (!this::isTypeOf('function')) {
     return false
-  }
-  if (!(classes::isInstanceOf(CommonCollections) || classes::isIterator())) {
-    classes = [classes]
   }
   return classes::some(cls => {
     if (cls::is(null)) return true
@@ -265,7 +253,7 @@ export function* flat(depth = 1) {
   for (const item of this) {
     if (
       !depth::sameValueZero(0) &&
-      (item::isInstanceOf(CommonCollections) || item::isIterator())
+      (item::isInstanceOf(...CommonCollections) || item::isIterator())
     ) {
       for (const subitem of item::flat(depth - 1)) {
         yield subitem
