@@ -163,6 +163,12 @@ export function times(times) {
   }
 }
 
+export function repeat(func) {
+  for (const i of range(this)) {
+    func()
+  }
+}
+
 export function drop(n = 1) {
   const it = this::iter()::it.next::times(n)
   return it

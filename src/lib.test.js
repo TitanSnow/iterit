@@ -453,3 +453,19 @@ test('range', () => {
   expect(it.range(8, 2, -2)::it.toArray()).toEqual([8, 6, 4])
   expect(it.range(2, 8, -2)::it.toArray()).toEqual([])
 })
+
+test('times', () => {
+  expect(it.times.name).toBe('times')
+  expect(it.times.length).toBe(1)
+  let times = 0
+  ;(() => ++times)::it.times(5)
+  expect(times).toBe(5)
+})
+
+test('repeat', () => {
+  expect(it.repeat.name).toBe('repeat')
+  expect(it.repeat.length).toBe(1)
+  let times = 0
+  ;5::it.repeat(() => ++times)
+  expect(times).toBe(5)
+})
