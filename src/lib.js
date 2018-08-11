@@ -175,7 +175,7 @@ export function drop(n = 1) {
   return it
 }
 
-export function reduce(func, initialValue) {
+export function reduce(func, initialValue = void 0) {
   const it = this::iter()
   let accumulator
   let idx
@@ -191,7 +191,7 @@ export function reduce(func, initialValue) {
     idx = 0
   }
   for (const item of it) {
-    accumulator = func(accumulator, item, idx++, it)
+    accumulator = func(accumulator, item, idx++, this)
   }
   return accumulator
 }

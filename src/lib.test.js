@@ -486,3 +486,39 @@ test('drop', () => {
   ).toEqual([4, 5])
   expect(a::it.drop(0)::it.toArray()).toEqual([1, 2, 3, 4, 5])
 })
+
+test('reduce', () => {
+  expect(it.reduce.name).toBe('reduce')
+  expect(it.reduce.length).toBe(1)
+  const a = [10, 2, 3]
+  expect(a::it.reduce((a, b) => a ** b)).toBe(1000000)
+  let accs = []
+  let idxs = []
+  let its = []
+  expect(
+    a::it.reduce((a, b, i, it) => {
+      accs.push(a)
+      idxs.push(i)
+      its.push(it)
+      return a ** b
+    })
+  ).toBe(1000000)
+  expect(accs).toEqual([10, 100])
+  expect(idxs).toEqual([1, 2])
+  expect(its[0]).toBe(a)
+  accs = []
+  idxs = []
+  its = []
+  const iter = a::it.iter()
+  expect(
+    iter::it.reduce((a, b, i, it) => {
+      accs.push(a)
+      idxs.push(i)
+      its.push(it)
+      return a ** b
+    }, 2)
+  ).toBe(1152921504606846976)
+  expect(accs).toEqual([2, 1024, 1048576])
+  expect(idxs).toEqual([0, 1, 2])
+  expect(its[0]).toBe(iter)
+})
