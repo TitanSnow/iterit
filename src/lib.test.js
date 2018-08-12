@@ -737,3 +737,12 @@ test('indexOf', () => {
   expect([1, -0, -0, 0, 1]::it.indexOf(0)).toBe(1)
   expect([NaN]::it.indexOf(NaN)).toBe(-1)
 })
+
+test('join', () => {
+  expect(it.join.name).toBe('join')
+  expect(it.join.length).toBe(1)
+  const a = [1, 2, 3]
+  expect(a::it.iter()::it.join()).toBe('1,2,3')
+  expect(a::it.iter()::it.join('-')).toBe('1-2-3')
+  expect([]::it.join()).toBe('')
+})
