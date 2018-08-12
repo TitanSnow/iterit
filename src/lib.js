@@ -364,3 +364,7 @@ export function* chunk(size) {
     yield chunk
   }
 }
+
+export function compact() {
+  return this::filter(x => x)
+}

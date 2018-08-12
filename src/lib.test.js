@@ -855,3 +855,9 @@ test('chunk', () => {
       ::it.toArray()
   ).toEqual([[0, 1, 2], [3]])
 })
+
+test('compact', () => {
+  expect(it.compact.name).toBe('compact')
+  expect(it.compact.length).toBe(0)
+  expect([0, 1, false, 2, '', 3, NaN]::it.compact()::it.toArray()).toEqual([1, 2, 3])
+})
