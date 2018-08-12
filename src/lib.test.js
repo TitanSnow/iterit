@@ -928,3 +928,10 @@ test('firstItem', () => {
   expect([1, 2, 3]::it.firstItem()).toBe(1)
   expect([]::it.firstItem()).toBeUndefined()
 })
+
+test('dropLast', () => {
+  expect(it.dropLast.name).toBe('dropLast')
+  expect(it.dropLast.length).toBe(0)
+  expect([1, 2, 3]::it.dropLast()::it.toArray()).toEqual([1, 2])
+  expect(it.range(1, 4)::it.dropLast()::it.toArray()).toEqual([1, 2])
+})

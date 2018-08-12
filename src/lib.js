@@ -410,3 +410,12 @@ export function fromEntries() {
 export function firstItem() {
   return this::iter().next().value
 }
+
+export function* dropLast() {
+  const it = this::iter()
+  let last = it::firstItem()
+  for (const item of it) {
+    yield last
+    last = item
+  }
+}
