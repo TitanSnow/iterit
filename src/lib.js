@@ -332,8 +332,14 @@ export function piece(...args) {
     ::take(stop - start)
     ::step(stp)
 }
+Object.defineProperty(
+  piece,
+  'length',
+  Object.assign(Object.getOwnPropertyDescriptor(piece, 'length'), { value: 1 })
+)
 
-export function slice(begin, end = void 0) {
+export function slice(begin, end) {
+  if (begin::isNullish()) begin = 0
   return this::piece(begin, end)
 }
 

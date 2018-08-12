@@ -793,3 +793,40 @@ test('step', () => {
       ::it.toArray()
   ).toEqual([0, 3, 6, 9])
 })
+
+test('piece', () => {
+  expect(it.piece.name).toBe('piece')
+  expect(it.piece.length).toBe(1)
+  const a = it.range(20)
+  expect(a::it.piece(5)::it.toArray()).toEqual([0, 1, 2, 3, 4])
+  expect(a::it.piece).toThrow()
+  expect(a::it.piece(1, 5)::it.toArray()).toEqual([6, 7, 8, 9])
+  expect(a::it.piece(1, 5, 2)::it.toArray()).toEqual([11, 13])
+})
+
+test('slice', () => {
+  expect(it.slice.name).toBe('slice')
+  expect(it.slice.length).toBe(2)
+  const a = [1, 2, 3, 4, 5]
+  expect(a::it.slice(2)::it.isIterator()).toBe(true)
+  expect(a::it.slice(2)::it.toArray()).toEqual([3, 4, 5])
+  expect(a::it.slice(2, 4)::it.toArray()).toEqual([3, 4])
+  expect(a::it.slice()::it.toArray()).toEqual(a)
+  expect(a::it.slice()::it.toArray()).not.toBe(a)
+})
+
+test('toArray', () => {
+  expect(it.toArray.name).toBe('toArray')
+  expect(it.toArray.length).toBe(0)
+  expect('awd'::it.toArray()).toEqual(['a', 'w', 'd'])
+  expect('𠮷'::it.toArray()).toEqual(['𠮷'])
+})
+
+test('sort', () => {
+  expect(it.sort.name).toBe('sort')
+  expect(it.sort.length).toBe(0)
+  const a = [4, 3, 5, 2, 1]
+  expect(a::it.sort()).toEqual([1, 2, 3, 4, 5])
+  expect(a).toEqual([4, 3, 5, 2, 1])
+  expect(a::it.sort((a, b) => a < b)).toEqual([5, 4, 3, 2, 1])
+})
