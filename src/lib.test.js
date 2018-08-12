@@ -860,5 +860,24 @@ test('chunk', () => {
 test('compact', () => {
   expect(it.compact.name).toBe('compact')
   expect(it.compact.length).toBe(0)
-  expect([0, 1, false, 2, '', 3, NaN]::it.compact()::it.toArray()).toEqual([1, 2, 3])
+  expect([0, 1, false, 2, '', 3, NaN]::it.compact()::it.toArray()).toEqual([
+    1,
+    2,
+    3
+  ])
+})
+
+test('dropWhile', () => {
+  expect(it.dropWhile.name).toBe('dropWhile')
+  expect(it.dropWhile.length).toBe(1)
+  const a = [2, 4, 6, 7, 8, 9, 10]
+  expect(a::it.dropWhile(x => x % 2 === 0)::it.toArray()).toEqual([7, 8, 9, 10])
+  expect(
+    a
+      ::it.dropWhile(function(x) {
+        return x % this === 0
+      }, 2)
+      ::it.toArray()
+  ).toEqual([7, 8, 9, 10])
+  expect([1, 3, 5, 7]::it.dropWhile(x => x % 2)::it.toArray()).toEqual([])
 })

@@ -370,3 +370,17 @@ export function* chunk(size) {
 export function compact() {
   return this::filter(x => x)
 }
+
+export function dropWhile(func, thisArg = void 0) {
+  const it = this::iter()
+  func = func.bind(thisArg)
+  let last
+  if (
+    it::every((item, ...rest) => {
+      last = item
+      return func(item, ...rest)
+    })
+  )
+    return it
+  else return [last]::concat(it)
+}
