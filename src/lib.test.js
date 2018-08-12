@@ -832,3 +832,26 @@ test('sort', () => {
   expect(a).toEqual([4, 3, 5, 2, 1])
   expect(a::it.sort((a, b) => a < b)).toEqual([5, 4, 3, 2, 1])
 })
+
+test('chunk', () => {
+  expect(it.chunk.name).toBe('chunk')
+  expect(it.chunk.length).toBe(1)
+  expect(
+    it
+      .range(4)
+      ::it.chunk()
+      ::it.toArray()
+  ).toEqual([[0], [1], [2], [3]])
+  expect(
+    it
+      .range(4)
+      ::it.chunk(2)
+      ::it.toArray()
+  ).toEqual([[0, 1], [2, 3]])
+  expect(
+    it
+      .range(4)
+      ::it.chunk(3)
+      ::it.toArray()
+  ).toEqual([[0, 1, 2], [3]])
+})

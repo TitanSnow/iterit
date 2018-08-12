@@ -352,3 +352,15 @@ export function sort(compareFn = void 0) {
 export function toArray() {
   return [...this]
 }
+
+export function* chunk(size) {
+  size = size ?? 1
+  const it = this::iter()
+  let chunk
+  while ((chunk = it::take(size)::toArray()).length::is(size)) {
+    yield chunk
+  }
+  if (chunk.length) {
+    yield chunk
+  }
+}
