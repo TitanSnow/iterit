@@ -690,3 +690,12 @@ test('flatMap', () => {
       ::it.toArray()
   ).toEqual([2, 4, NaN])
 })
+
+test('includes', () => {
+  expect(it.includes.name).toBe('includes')
+  expect(it.includes.length).toBe(1)
+  expect(it.range(10)::it.includes(5)).toBe(true)
+  expect(it.range(10)::it.includes(15)).toBe(false)
+  expect(it.range(10)::it.includes(5, 5)).toBe(true)
+  expect(it.range(10)::it.includes(5, 6)).toBe(false)
+})
