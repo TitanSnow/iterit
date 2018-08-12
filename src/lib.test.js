@@ -540,6 +540,7 @@ test('reduce', () => {
   expect(accs).toEqual([2, 1024, 1048576])
   expect(idxs).toEqual([0, 1, 2])
   expect(its[0]).toBe(iter)
+  expect([]::it.reduce).toThrow()
 })
 
 test('every', () => {
@@ -708,6 +709,7 @@ test('flatMap', () => {
       }, 2)
       ::it.toArray()
   ).toEqual([2, 4, NaN])
+  expect(a::it.flatMap(x => [x * 2])::it.toArray()).toEqual([2, 4, NaN])
 })
 
 test('includes', () => {
@@ -741,9 +743,9 @@ test('indexOf', () => {
 test('join', () => {
   expect(it.join.name).toBe('join')
   expect(it.join.length).toBe(1)
-  const a = [1, 2, 3]
-  expect(a::it.iter()::it.join()).toBe('1,2,3')
-  expect(a::it.iter()::it.join('-')).toBe('1-2-3')
+  const a = [1, null, '2', void 0, 3]
+  expect(a::it.iter()::it.join()).toBe('1,,2,,3')
+  expect(a::it.iter()::it.join('-')).toBe('1--2--3')
   expect([]::it.join()).toBe('')
 })
 
