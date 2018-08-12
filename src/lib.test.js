@@ -933,5 +933,19 @@ test('dropLast', () => {
   expect(it.dropLast.name).toBe('dropLast')
   expect(it.dropLast.length).toBe(0)
   expect([1, 2, 3]::it.dropLast()::it.toArray()).toEqual([1, 2])
-  expect(it.range(1, 4)::it.dropLast()::it.toArray()).toEqual([1, 2])
+  expect(
+    it
+      .range(1, 4)
+      ::it.dropLast()
+      ::it.toArray()
+  ).toEqual([1, 2])
+})
+
+test('nth', () => {
+  expect(it.nth.name).toBe('nth')
+  expect(it.nth.length).toBe(1)
+  const a = 'abcd'
+  expect(a::it.nth()).toBe('a')
+  expect(a::it.nth(1)).toBe('b')
+  expect(a::it.nth(4)).toBeUndefined()
 })

@@ -419,3 +419,8 @@ export function* dropLast() {
     last = item
   }
 }
+
+export function nth(n) {
+  n = n ?? 0
+  return this::filter((item, idx) => idx::sameValueZero(n))::firstItem()
+}
