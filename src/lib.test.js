@@ -921,3 +921,10 @@ test('fromEntries', () => {
     b: 2
   })
 })
+
+test('firstItem', () => {
+  expect(it.firstItem.name).toBe('firstItem')
+  expect(it.firstItem.length).toBe(0)
+  expect([1, 2, 3]::it.firstItem()).toBe(1)
+  expect([]::it.firstItem()).toBeUndefined()
+})

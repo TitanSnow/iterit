@@ -406,3 +406,7 @@ export function fromEntries() {
   ;this::forEach(([key, value]) => (obj[key] = value))
   return obj
 }
+
+export function firstItem() {
+  return this::iter().next().value
+}
