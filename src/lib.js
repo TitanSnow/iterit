@@ -384,3 +384,15 @@ export function dropWhile(func, thisArg = void 0) {
     return it
   else return [last]::concat(it)
 }
+
+export function* fill(value, start = 0, end = void 0) {
+  let idx = 0
+  for (const item of this) {
+    if (idx >= start && (end::is(void 0) || idx < end)) {
+      yield value
+    } else {
+      yield item
+    }
+    ++idx
+  }
+}

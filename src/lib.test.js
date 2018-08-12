@@ -881,3 +881,21 @@ test('dropWhile', () => {
   ).toEqual([7, 8, 9, 10])
   expect([1, 3, 5, 7]::it.dropWhile(x => x % 2)::it.toArray()).toEqual([])
 })
+
+test('fill', () => {
+  expect(it.fill.name).toBe('fill')
+  expect(it.fill.length).toBe(1)
+  const a = [1, 2, 3]
+  expect(a::it.fill('a')::it.toArray()).toEqual(['a', 'a', 'a'])
+  expect(
+    Array(3)
+      ::it.fill(2)
+      ::it.toArray()
+  ).toEqual([2, 2, 2])
+  expect([4, 6, 8, 10]::it.fill('*', 1, 3)::it.toArray()).toEqual([
+    4,
+    '*',
+    '*',
+    10
+  ])
+})
