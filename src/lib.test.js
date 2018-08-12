@@ -949,3 +949,17 @@ test('nth', () => {
   expect(a::it.nth(1)).toBe('b')
   expect(a::it.nth(4)).toBeUndefined()
 })
+
+test('takeWhile', () => {
+  expect(it.takeWhile.name).toBe('takeWhile')
+  expect(it.takeWhile.length).toBe(1)
+  const a = [1, 3, 5, 8, 11, 13]
+  expect(
+    a
+      ::it.takeWhile(function(x) {
+        return x % this
+      }, 2)
+      ::it.toArray()
+  ).toEqual([1, 3, 5])
+  expect([2, 4, 6]::it.takeWhile(x => x % 2)::it.toArray()).toEqual([])
+})

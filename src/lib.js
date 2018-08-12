@@ -424,3 +424,11 @@ export function nth(n) {
   n = n ?? 0
   return this::filter((item, idx) => idx::sameValueZero(n))::firstItem()
 }
+
+export function* takeWhile(func, thisArg = void 0) {
+  func = func.bind(thisArg)
+  for (const item of new NoClosing(this)) {
+    if (func(item)) yield item
+    else break
+  }
+}
