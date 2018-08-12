@@ -312,10 +312,11 @@ export function lastItem() {
 
 export function* take(stop) {
   let idx = 0
-  for (const item of new NoClosing(this)) {
-    if (idx++ >= stop) break
-    yield item
-  }
+  if (!stop::sameValueZero(0))
+    for (const item of new NoClosing(this)) {
+      yield item
+      if (++idx >= stop) break
+    }
 }
 
 export function* step(step) {

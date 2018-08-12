@@ -746,3 +746,50 @@ test('join', () => {
   expect(a::it.iter()::it.join('-')).toBe('1-2-3')
   expect([]::it.join()).toBe('')
 })
+
+test('lastItem', () => {
+  expect(it.lastItem.name).toBe('lastItem')
+  expect(it.lastItem.length).toBe(0)
+  const a = [1, 2, 3]
+  expect(a::it.lastItem()).toBe(3)
+  expect([]::it.lastItem()).toBeUndefined()
+})
+
+test('take', () => {
+  expect(it.take.name).toBe('take')
+  expect(it.take.length).toBe(1)
+  const iter = it.range(10)
+  expect(iter::it.take(3)::it.toArray()).toEqual([0, 1, 2])
+  ;iter::it.take(3)
+  expect(iter::it.take(3)::it.toArray()).toEqual([3, 4, 5])
+  expect(iter::it.take(0)::it.toArray()).toEqual([])
+})
+
+test('step', () => {
+  expect(it.step.name).toBe('step')
+  expect(it.step.length).toBe(1)
+  expect(
+    it
+      .range(10)
+      ::it.step(1)
+      ::it.isIterator()
+  ).toBe(true)
+  expect(
+    it
+      .range(10)
+      ::it.step(1)
+      ::it.toArray()
+  ).toEqual(it.range(10)::it.toArray())
+  expect(
+    it
+      .range(10)
+      ::it.step(2)
+      ::it.toArray()
+  ).toEqual([0, 2, 4, 6, 8])
+  expect(
+    it
+      .range(10)
+      ::it.step(3)
+      ::it.toArray()
+  ).toEqual([0, 3, 6, 9])
+})
