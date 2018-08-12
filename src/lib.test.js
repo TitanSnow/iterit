@@ -389,8 +389,8 @@ test('forEach', () => {
   expect(() => a::it.forEach(thr, rst)).toThrow()
   expect(rst).toEqual([1, 2])
   iter = it.range(10)
-  expect(
-    () => iter::it.forEach(x => {
+  expect(() =>
+    iter::it.forEach(x => {
       if (x === 5) throw 'awd'
     })
   ).toThrow()
