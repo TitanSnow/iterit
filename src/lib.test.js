@@ -615,3 +615,65 @@ test('isSubclassOf', () => {
   expect(null::it.isSubclassOf(C)).toBe(false)
   expect(C::it.isSubclassOf(null)).toBe(true)
 })
+
+test('flat', () => {
+  expect(it.flat.name).toBe('flat')
+  expect(it.flat.length).toBe(0)
+  const a = [
+    1,
+    2,
+    [3, 4, [5, 6]],
+    '78',
+    '9X'::it.iter(),
+    new Set([10, 11, new Set([12, 13])]),
+    new Map([[14, 15], [16, 17]])
+  ]
+  expect(a::it.flat()::it.isIterator()).toBe(true)
+  expect(a::it.flat()::it.toArray()).toEqual([
+    1,
+    2,
+    3,
+    4,
+    [5, 6],
+    '78',
+    '9',
+    'X',
+    10,
+    11,
+    new Set([12, 13]),
+    [14, 15],
+    [16, 17]
+  ])
+  expect(a::it.flat()::it.toArray()).toEqual([
+    1,
+    2,
+    3,
+    4,
+    [5, 6],
+    '78',
+    10,
+    11,
+    new Set([12, 13]),
+    [14, 15],
+    [16, 17]
+  ])
+  expect(a::it.flat(0)::it.toArray()).toEqual(a)
+  expect(a::it.flat(-0)::it.toArray()).toEqual(a)
+  expect(a::it.flat(2)::it.toArray()).toEqual([
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    '78',
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+  ])
+})
