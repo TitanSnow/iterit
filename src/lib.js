@@ -124,9 +124,11 @@ export function* concat(...its) {
     yield item
   }
   for (const it of its) {
-    for (const item of it) {
-      yield item
-    }
+    if (it::isInstanceOf(...CommonCollections) || it::isIterator())
+      for (const item of it) {
+        yield item
+      }
+    else yield it
   }
 }
 

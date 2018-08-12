@@ -449,6 +449,7 @@ test('concat', () => {
       ::it.concat(a(), b(), c())
       ::it.toArray()
   ).toEqual(rst)
+  expect([1]::it.concat(2, [3], [[4]])::it.toArray()).toEqual([1, 2, 3, [4]])
 })
 
 test('next', () => {
