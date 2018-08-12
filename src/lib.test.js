@@ -677,3 +677,16 @@ test('flat', () => {
     17
   ])
 })
+
+test('flatMap', () => {
+  expect(it.flatMap.name).toBe('flatMap')
+  expect(it.flatMap.length).toBe(1)
+  const a = [1, 2, [3, 4]]
+  expect(
+    a
+      ::it.flatMap(function(x) {
+        return [x * this]
+      }, 2)
+      ::it.toArray()
+  ).toEqual([2, 4, NaN])
+})
