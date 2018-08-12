@@ -903,5 +903,21 @@ test('fill', () => {
 test('flatDeep', () => {
   expect(it.flatDeep.name).toBe('flatDeep')
   expect(it.flatDeep.length).toBe(0)
-  expect([1, [2, [3, [4]], 5]]::it.flatDeep()::it.toArray()).toEqual([1, 2, 3, 4, 5])
+  expect([1, [2, [3, [4]], 5]]::it.flatDeep()::it.toArray()).toEqual([
+    1,
+    2,
+    3,
+    4,
+    5
+  ])
+})
+
+test('fromEntries', () => {
+  expect(it.fromEntries.name).toBe('fromEntries')
+  expect(it.fromEntries.length).toBe(0)
+  expect([['a', 1], ['b', 2]]::it.fromEntries()).toEqual({ a: 1, b: 2 })
+  expect(new Map([['a', 1], ['b', 2]])::it.fromEntries()).toEqual({
+    a: 1,
+    b: 2
+  })
 })

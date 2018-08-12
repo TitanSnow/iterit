@@ -400,3 +400,9 @@ export function* fill(value, start = 0, end = void 0) {
 export function flatDeep() {
   return this::flat(1 / 0)
 }
+
+export function fromEntries() {
+  const obj = {}
+  ;this::forEach(([key, value]) => (obj[key] = value))
+  return obj
+}
