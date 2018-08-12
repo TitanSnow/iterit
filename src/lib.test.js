@@ -331,6 +331,18 @@ test('map', () => {
     return x * this
   }
   expect(a::it.map(ths, 2)::it.toArray()).toEqual([2, 4, 6])
+  iter = it.range(10)
+  expect(
+    iter::it.map(x => {
+      if (x === 5) throw 'awd'
+    })::it.toArray
+  ).toThrow()
+  expect(iter::it.toArray()).toEqual([6, 7, 8, 9])
+  iter = it.range(10)
+  ;iter::it.map(x => {
+    if (x === 5) throw 'awd'
+  })
+  expect(iter::it.toArray()).toEqual(it.range(10)::it.toArray())
 })
 
 test('forEach', () => {
@@ -358,7 +370,7 @@ test('forEach', () => {
     expect(item[2]).toBe(a)
   })
   rst = []
-  const iter = a::it.iter()
+  let iter = a::it.iter()
   ;iter::it.forEach((item, idx, it) => rst.push([item, idx, it]))
   rst.forEach((item, idx) => {
     expect(item[0]).toBe(a[idx])
@@ -376,6 +388,13 @@ test('forEach', () => {
   }
   expect(() => a::it.forEach(thr, rst)).toThrow()
   expect(rst).toEqual([1, 2])
+  iter = it.range(10)
+  expect(
+    () => iter::it.forEach(x => {
+      if (x === 5) throw 'awd'
+    })
+  ).toThrow()
+  expect(iter::it.toArray()).toEqual([6, 7, 8, 9])
 })
 
 test('filter', () => {
@@ -698,4 +717,8 @@ test('includes', () => {
   expect(it.range(10)::it.includes(15)).toBe(false)
   expect(it.range(10)::it.includes(5, 5)).toBe(true)
   expect(it.range(10)::it.includes(5, 6)).toBe(false)
+  const iter = it.range(10)
+  expect(iter::it.includes(5, 2)).toBe(true)
+  expect(iter::it.toArray()).toEqual([6, 7, 8, 9])
+  expect([1, -0, -1]::it.includes(0)).toBe(true)
 })

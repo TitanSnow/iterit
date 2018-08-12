@@ -86,10 +86,22 @@ export function not() {
   return !this
 }
 
+class NoClosing {
+  constructor(iterable) {
+    this.iter = iterable::iter()
+  }
+  next() {
+    return this.iter.next()
+  }
+  [Symbol.iterator]() {
+    return this
+  }
+}
+
 export function* map(func, thisArg = void 0) {
   func = func.bind(thisArg)
   let idx = 0
-  for (const item of this) {
+  for (const item of new NoClosing(this)) {
     yield func(item, idx++, this)
   }
 }
@@ -190,7 +202,7 @@ export function reduce(func, initialValue = void 0) {
     accumulator = initialValue
     idx = 0
   }
-  for (const item of it) {
+  for (const item of new NoClosing(it)) {
     accumulator = func(accumulator, item, idx++, this)
   }
   return accumulator
@@ -198,7 +210,7 @@ export function reduce(func, initialValue = void 0) {
 
 export function every(func, thisArg = void 0) {
   func = func.bind(thisArg)
-  for (const item of this) {
+  for (const item of new NoClosing(this)) {
     if (!func(item)) return false
   }
   return true
@@ -206,7 +218,7 @@ export function every(func, thisArg = void 0) {
 
 export function some(func, thisArg = void 0) {
   func = func.bind(thisArg)
-  for (const item of this) {
+  for (const item of new NoClosing(this)) {
     if (func(item)) return true
   }
   return false
@@ -250,7 +262,7 @@ export function isSubclassOf(...classes) {
 }
 
 export function* flat(depth = 1) {
-  for (const item of this) {
+  for (const item of new NoClosing(this)) {
     if (
       !depth::sameValueZero(0) &&
       (item::isInstanceOf(...CommonCollections) || item::isIterator())
@@ -273,7 +285,7 @@ export function includes(searchElement, fromIndex = 0) {
 export function indexOf(searchElement, fromIndex = 0) {
   let result = fromIndex
   const it = this::drop(fromIndex)
-  for (const item of it) {
+  for (const item of new NoClosing(it)) {
     if (item === searchElement) return result
     ++result
   }
@@ -285,7 +297,7 @@ export function join(separator) {
   const it = this::iter()
   let result = ''
   result += it.next().value ?? ''
-  for (const item of it) {
+  for (const item of new NoClosing(it)) {
     result += separator
     result += item ?? ''
   }
@@ -300,7 +312,7 @@ export function lastItem() {
 
 export function* take(stop) {
   let idx = 0
-  for (const item of this) {
+  for (const item of new NoClosing(this)) {
     if (idx++ >= stop) break
     yield item
   }
