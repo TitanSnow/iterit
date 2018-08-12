@@ -396,3 +396,7 @@ export function* fill(value, start = 0, end = void 0) {
     ++idx
   }
 }
+
+export function flatDeep() {
+  return this::flat(1 / 0)
+}

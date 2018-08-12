@@ -899,3 +899,9 @@ test('fill', () => {
     10
   ])
 })
+
+test('flatDeep', () => {
+  expect(it.flatDeep.name).toBe('flatDeep')
+  expect(it.flatDeep.length).toBe(0)
+  expect([1, [2, [3, [4]], 5]]::it.flatDeep()::it.toArray()).toEqual([1, 2, 3, 4, 5])
+})
