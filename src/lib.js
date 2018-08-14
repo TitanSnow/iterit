@@ -247,13 +247,8 @@ export function find(func, thisArg = void 0) {
 
 export function findIndex(func, thisArg = void 0) {
   func = func.bind(thisArg)
-  let index
-  ;this::find((item, idx, it) => {
-    const found = func(item, idx, it)
-    if (found) index = idx
-    return found
-  })
-  return index ?? -1
+  const r = this::enumerate()::find(([item], idx, it) => func(item, idx, it))
+  return r::is(void 0) ? -1 : r[1]
 }
 
 const TypedArray = Object.getPrototypeOf(Int32Array)
