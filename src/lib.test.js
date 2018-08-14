@@ -1,5 +1,4 @@
 import * as it from './lib'
-import isArrowFunction from 'is-arrow-function'
 
 test('index', () => {
   expect(it.index.name).toBe('index')
@@ -463,7 +462,6 @@ test('next', () => {
 test('range', () => {
   expect(it.range.name).toBe('range')
   expect(it.range.length).toBe(1)
-  expect(isArrowFunction(it.range)).toBeTruthy()
   expect(it.range).toThrow(TypeError)
   expect(it.range(10)::it.isIterator()).toBe(true)
   expect(it.range(10)::it.toArray()).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
@@ -962,4 +960,110 @@ test('takeWhile', () => {
       ::it.toArray()
   ).toEqual([1, 3, 5])
   expect([2, 4, 6]::it.takeWhile(x => x % 2)::it.toArray()).toEqual([])
+})
+
+test('concatFront', () => {
+  expect(it.concatFront.name).toBe('concatFront')
+  expect(it.concatFront.length).toBe(0)
+  const a = () => it.range(10)
+  const b = () => it.range(10, 20)
+  const c = () => it.range(20, 30)
+  const rst = it.range(30)::it.toArray()
+  expect(
+    c()
+      ::it.concatFront(a(), b())
+      ::it.isIterator()
+  ).toBe(true)
+  expect(
+    c()
+      ::it.concatFront(a(), b())
+      ::it.toArray()
+  ).toEqual(rst)
+  expect([]::it.concatFront(a(), b(), c())::it.toArray()).toEqual(rst)
+  expect(
+    (function*() {})()
+      ::it.concatFront(a(), b(), c())
+      ::it.toArray()
+  ).toEqual(rst)
+  expect([1]::it.concatFront(2, [3], [[4]])::it.toArray()).toEqual([
+    2,
+    3,
+    [4],
+    1
+  ])
+})
+
+test('zip', () => {
+  expect(it.zip.name).toBe('zip')
+  expect(it.zip.length).toBe(0)
+  expect([1, 2, 3]::it.zip([4, 5, 6, 7])::it.toArray()).toEqual([
+    [1, 4],
+    [2, 5],
+    [3, 6]
+  ])
+  expect(null::it.zip([1, 2, 3], [4, 5, 6, 7])::it.toArray()).toEqual([
+    [1, 4],
+    [2, 5],
+    [3, 6]
+  ])
+  expect([1, 2, 3]::it.zip([4, 5, 6, 7], [8, 9])::it.toArray()).toEqual([
+    [1, 4, 8],
+    [2, 5, 9]
+  ])
+})
+
+test('zipLongest', () => {
+  expect(it.zipLongest.name).toBe('zipLongest')
+  expect(it.zipLongest.length).toBe(0)
+  expect([1, 2, 3]::it.zipLongest([4, 5, 6, 7])::it.toArray()).toEqual([
+    [1, 4],
+    [2, 5],
+    [3, 6],
+    [void 0, 7]
+  ])
+  expect(null::it.zipLongest([1, 2, 3], [4, 5, 6, 7])::it.toArray()).toEqual([
+    [1, 4],
+    [2, 5],
+    [3, 6],
+    [void 0, 7]
+  ])
+  expect([1, 2, 3]::it.zipLongest([4, 5, 6, 7], [8, 9])::it.toArray()).toEqual([
+    [1, 4, 8],
+    [2, 5, 9],
+    [3, 6, void 0],
+    [void 0, 7, void 0]
+  ])
+})
+
+test('count', () => {
+  expect(it.count.name).toBe('count')
+  expect(it.count.length).toBe(0)
+  expect(
+    it
+      .count()
+      ::it.take(5)
+      ::it.toArray()
+  ).toEqual([0, 1, 2, 3, 4])
+  expect(
+    it
+      .count(1)
+      ::it.take(5)
+      ::it.toArray()
+  ).toEqual([1, 2, 3, 4, 5])
+  expect(
+    it
+      .count(1, -1)
+      ::it.take(5)
+      ::it.toArray()
+  ).toEqual([1, 0, -1, -2, -3])
+})
+
+test('enumerate', () => {
+  expect(it.enumerate.name).toBe('enumerate')
+  expect(it.enumerate.length).toBe(0)
+  expect([1, 2, 3]::it.enumerate()::it.toArray()).toEqual([
+    [1, 0],
+    [2, 1],
+    [3, 2]
+  ])
 })
