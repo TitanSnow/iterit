@@ -98,10 +98,12 @@ class NoClosing {
   }
 }
 
+const no_closing = it => new NoClosing(it)
+
 export function* map(func, thisArg = void 0) {
   func = func.bind(thisArg)
   let idx = 0
-  for (const item of new NoClosing(this)) {
+  for (const item of no_closing(this)) {
     yield func(item, idx++, this)
   }
 }
@@ -120,12 +122,12 @@ export function* filter(func, thisArg = void 0) {
 }
 
 export function* concat(...its) {
-  for (const item of this) {
+  for (const item of no_closing(this)) {
     yield item
   }
   for (const it of its) {
     if (it::isInstanceOf(...CommonCollections) || it::isIterator())
-      for (const item of it) {
+      for (const item of no_closing(it)) {
         yield item
       }
     else yield it
@@ -204,7 +206,7 @@ export function reduce(func, initialValue = void 0) {
     accumulator = initialValue
     idx = 0
   }
-  for (const item of new NoClosing(it)) {
+  for (const item of no_closing(it)) {
     accumulator = func(accumulator, item, idx++, this)
   }
   return accumulator
@@ -212,7 +214,7 @@ export function reduce(func, initialValue = void 0) {
 
 export function every(func, thisArg = void 0) {
   func = func.bind(thisArg)
-  for (const item of new NoClosing(this)) {
+  for (const item of no_closing(this)) {
     if (!func(item)) return false
   }
   return true
@@ -220,7 +222,7 @@ export function every(func, thisArg = void 0) {
 
 export function some(func, thisArg = void 0) {
   func = func.bind(thisArg)
-  for (const item of new NoClosing(this)) {
+  for (const item of no_closing(this)) {
     if (func(item)) return true
   }
   return false
@@ -264,7 +266,7 @@ export function isSubclassOf(...classes) {
 }
 
 export function* flat(depth = 1) {
-  for (const item of new NoClosing(this)) {
+  for (const item of no_closing(this)) {
     if (
       !depth::sameValueZero(0) &&
       (item::isInstanceOf(...CommonCollections) || item::isIterator())
@@ -287,7 +289,7 @@ export function includes(searchElement, fromIndex = 0) {
 export function indexOf(searchElement, fromIndex = 0) {
   let result = fromIndex
   const it = this::drop(fromIndex)
-  for (const item of new NoClosing(it)) {
+  for (const item of no_closing(it)) {
     if (item === searchElement) return result
     ++result
   }
@@ -299,7 +301,7 @@ export function join(separator) {
   const it = this::iter()
   let result = ''
   result += it.next().value ?? ''
-  for (const item of new NoClosing(it)) {
+  for (const item of no_closing(it)) {
     result += separator
     result += item ?? ''
   }
@@ -308,14 +310,14 @@ export function join(separator) {
 
 export function lastItem() {
   let item
-  for (item of this);
+  for (item of no_closing(this));
   return item
 }
 
 export function* take(stop) {
   let idx = 0
   if (!stop::sameValueZero(0))
-    for (const item of new NoClosing(this)) {
+    for (const item of no_closing(this)) {
       yield item
       if (++idx >= stop) break
     }
@@ -323,7 +325,7 @@ export function* take(stop) {
 
 export function* step(step) {
   let idx = 0
-  for (const item of this) {
+  for (const item of no_closing(this)) {
     if ((idx++ % step)::sameValueZero(0)) yield item
   }
 }
@@ -387,7 +389,7 @@ export function dropWhile(func, thisArg = void 0) {
 
 export function* fill(value, start = 0, end = void 0) {
   let idx = 0
-  for (const item of this) {
+  for (const item of no_closing(this)) {
     if (idx >= start && (end::is(void 0) || idx < end)) {
       yield value
     } else {
@@ -414,7 +416,7 @@ export function firstItem() {
 export function* dropLast() {
   const it = this::iter()
   let last = it::firstItem()
-  for (const item of it) {
+  for (const item of no_closing(it)) {
     yield last
     last = item
   }
@@ -427,7 +429,7 @@ export function nth(n) {
 
 export function* takeWhile(func, thisArg = void 0) {
   func = func.bind(thisArg)
-  for (const item of new NoClosing(this)) {
+  for (const item of no_closing(this)) {
     if (func(item)) yield item
     else break
   }
