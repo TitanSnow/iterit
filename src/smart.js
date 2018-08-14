@@ -1,5 +1,5 @@
-import * as lib from './lib'
-import isArrowFunction from 'is-arrow-function'
+const lib = require('./lib')
+const isArrowFunction = require('is-arrow-function')
 
 Object.entries(lib).forEach(([key, value]) => {
   if (isArrowFunction(value)) {
