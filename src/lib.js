@@ -477,3 +477,7 @@ export const count = (start = 0, step = 1) => {
 export function enumerate() {
   return this::zip(count())
 }
+
+export function unzip() {
+  return zip(...this)
+}

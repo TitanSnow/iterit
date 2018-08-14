@@ -1067,3 +1067,13 @@ test('enumerate', () => {
     [3, 2]
   ])
 })
+
+test('unzip', () => {
+  expect(it.unzip.name).toBe('unzip')
+  expect(it.unzip.length).toBe(0)
+  expect([['a', 1, true], ['b', 2, false]]::it.unzip()::it.toArray()).toEqual([
+    ['a', 'b'],
+    [1, 2],
+    [true, false]
+  ])
+})
