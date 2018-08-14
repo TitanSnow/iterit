@@ -134,6 +134,19 @@ export function* concat(...its) {
   }
 }
 
+export function* concatFront(...its) {
+  for (const it of its) {
+    if (it::isInstanceOf(...CommonCollections) || it::isIterator())
+      for (const item of no_closing(it)) {
+        yield item
+      }
+    else yield it
+  }
+  for (const item of no_closing(this)) {
+    yield item
+  }
+}
+
 export function next() {
   return this.next()
 }
@@ -229,7 +242,7 @@ export function some(func, thisArg = void 0) {
 }
 
 export function find(func, thisArg = void 0) {
-  return this::filter(func, thisArg).next().value
+  return this::filter(func, thisArg)::firstItem()
 }
 
 export function findIndex(func, thisArg = void 0) {
@@ -315,18 +328,16 @@ export function lastItem() {
 }
 
 export function* take(stop) {
-  let idx = 0
   if (!stop::sameValueZero(0))
-    for (const item of no_closing(this)) {
+    for (const [item, idx] of this::enumerate()) {
       yield item
-      if (++idx >= stop) break
+      if (idx + 1 >= stop) break
     }
 }
 
 export function* step(step) {
-  let idx = 0
-  for (const item of no_closing(this)) {
-    if ((idx++ % step)::sameValueZero(0)) yield item
+  for (const [item, idx] of this::enumerate()) {
+    if ((idx % step)::sameValueZero(0)) yield item
   }
 }
 
@@ -388,14 +399,12 @@ export function dropWhile(func, thisArg = void 0) {
 }
 
 export function* fill(value, start = 0, end = void 0) {
-  let idx = 0
-  for (const item of no_closing(this)) {
+  for (const [item, idx] of this::enumerate()) {
     if (idx >= start && (end::is(void 0) || idx < end)) {
       yield value
     } else {
       yield item
     }
-    ++idx
   }
 }
 
@@ -433,4 +442,38 @@ export function* takeWhile(func, thisArg = void 0) {
     if (func(item)) yield item
     else break
   }
+}
+
+export function* zip(...its) {
+  if (!this::isNullish()) {
+    its = its::concatFront([this])
+  }
+  its = its::map(it => it::iter())::toArray()
+  while (true) {
+    const result = its::map(it => it.next())::toArray()
+    if (result::some(r => r.done)) break
+    yield result::map(r => r.value)::toArray()
+  }
+}
+
+export function* zipLongest(...its) {
+  if (!this::isNullish()) {
+    its = its::concatFront([this])
+  }
+  its = its::map(it => it::iter())::toArray()
+  while (true) {
+    const result = its::map(it => it.next())::toArray()
+    if (result::every(r => r.done)) break
+    yield result::map(r => r.value)::toArray()
+  }
+}
+
+export const count = (start = 0, step = 1) => {
+  return (function*() {
+    for (let i = start; ; i += step) yield i
+  })()
+}
+
+export function enumerate() {
+  return this::zip(count())
 }
