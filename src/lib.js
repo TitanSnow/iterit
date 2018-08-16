@@ -478,3 +478,83 @@ export function* splice(start, deleteCount, ...newItems) {
     yield* it::drop(deleteCount)
   }
 }
+
+export function countBy(func) {
+  return this::reduce((map, item) => {
+    const key = func(item)
+    map.set(key, (map.get(key) ?? 0) + 1)
+    return map
+  }, new Map())
+}
+
+export function groupBy(func) {
+  return this::reduce((map, item) => {
+    const key = func(item)
+    const value = map.get(key) ?? []
+    value.push(item)
+    map.set(key, value)
+    return map
+  }, new Map())
+}
+
+export function keyBy(func) {
+  return this::reduce((map, item) => {
+    const key = func(item)
+    map.set(key, item)
+    return map
+  }, new Map())
+}
+
+// I dislike this
+// export function invokeMap(path, ...args) {
+//   if (path::isTypeOf('string')) {
+//     path = path.split('.')
+//   }
+//   if (path::isInstanceOf(...CommonCollections) || path::isIterator()) {
+//     const methodPath = path::toArray()
+//     path = o =>
+//       methodPath
+//         ::dropLast()
+//         ::reduce((o, idx) => o[idx], o)
+//         ::getBound(methodPath::lastItem())
+//         ::call(...args)
+//   }
+//   return this::map(path)
+// }
+
+export function partition(func, thisArg = void 0) {
+  func = func.bind(thisArg)
+  const r = [[], []]
+  const t = [x => x, x => !x]
+  const it = this::iter()
+  function* f() {
+    while (true) {
+      if (r[this].length) yield r[this].splice(0, 1)[0]
+      else {
+        let nxt
+        while (true) {
+          nxt = it.next()
+          if (nxt.done) return
+          if (t[this](func(nxt.value))) {
+            yield nxt.value
+            break
+          } else {
+            r[this ^ 1].push(nxt.value)
+          }
+        }
+      }
+    }
+  }
+  return [f.call(0), f.call(1)]
+}
+
+export function reject(func, thisArg = void 0) {
+  func = func.bind(thisArg)
+  return this::filter((...args) => !func(...args))
+}
+
+export function length() {
+  let len = 0
+  ;this::forEach(() => ++len)
+  return len
+}

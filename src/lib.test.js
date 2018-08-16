@@ -1095,3 +1095,115 @@ test('splice', () => {
     4
   ])
 })
+
+test('countBy', () => {
+  expect(it.countBy.name).toBe('countBy')
+  expect(it.countBy.length).toBe(1)
+  expect([6.1, 4.2, 6.3]::it.countBy(Math.floor)::it.isInstanceOf(Map)).toBe(
+    true
+  )
+  expect([6.1, 4.2, 6.3]::it.countBy(Math.floor)::it.toArray()).toEqual([
+    [6, 2],
+    [4, 1]
+  ])
+  expect(
+    ['one', 'two', 'three']::it.countBy(x => x.length)::it.toArray()
+  ).toEqual([[3, 2], [5, 1]])
+})
+
+test('groupBy', () => {
+  expect(it.groupBy.name).toBe('groupBy')
+  expect(it.groupBy.length).toBe(1)
+  expect([6.1, 4.2, 6.3]::it.groupBy(Math.floor)::it.isInstanceOf(Map)).toBe(
+    true
+  )
+  expect([6.1, 4.2, 6.3]::it.groupBy(Math.floor)::it.toArray()).toEqual([
+    [6, [6.1, 6.3]],
+    [4, [4.2]]
+  ])
+  expect(
+    ['one', 'two', 'three']::it.groupBy(x => x.length)::it.toArray()
+  ).toEqual([[3, ['one', 'two']], [5, ['three']]])
+})
+
+test('keyBy', () => {
+  expect(it.keyBy.name).toBe('keyBy')
+  expect(it.keyBy.length).toBe(1)
+  expect([6.1, 4.2, 6.3]::it.keyBy(Math.floor)::it.isInstanceOf(Map)).toBe(true)
+  expect([6.1, 4.2, 6.3]::it.keyBy(Math.floor)::it.toArray()).toEqual([
+    [6, 6.3],
+    [4, 4.2]
+  ])
+  expect(
+    ['one', 'two', 'three']::it.keyBy(x => x.length)::it.toArray()
+  ).toEqual([[3, 'two'], [5, 'three']])
+})
+
+test('partition', () => {
+  expect(it.partition.name).toBe('partition')
+  expect(it.partition.length).toBe(1)
+  const a = it.range(10)::it.toArray()
+  expect(Array.isArray(a::it.partition(x => x % 2))).toBe(true)
+  expect(
+    a
+      ::it.partition(x => x % 2)
+      ::it.map(r => r::it.toArray())
+      ::it.toArray()
+  ).toEqual([[1, 3, 5, 7, 9], [0, 2, 4, 6, 8]])
+  expect(
+    a
+      ::it.partition(function(x) {
+        return x % this
+      }, 2)
+      ::it.unzip()
+      ::it.toArray()
+  ).toEqual([[1, 0], [3, 2], [5, 4], [7, 6], [9, 8]])
+  expect(
+    a
+      ::it.drop()
+      ::it.partition(x => x % 2)
+      ::it.unzip()
+      ::it.toArray()
+  ).toEqual([[1, 2], [3, 4], [5, 6], [7, 8]])
+})
+
+test('reject', () => {
+  expect(it.reject.name).toBe('reject')
+  expect(it.reject.length).toBe(1)
+  const a = [1, 2, 3, 4, 5, 6]
+  expect(a::it.reject(x => x % 2)::it.isIterator()).toBe(true)
+  expect(a::it.reject(x => x % 2)::it.toArray()).toEqual([2, 4, 6])
+  expect(
+    a
+      ::it.reject(function(x) {
+        return x % this
+      }, 3)
+      ::it.toArray()
+  ).toEqual([3, 6])
+  const iter = a::it.iter()
+  let r
+  const idxs = []
+  expect(
+    iter
+      ::it.reject(function(x, idx, it) {
+        this.push(idx)
+        r = it
+        return x % 2
+      }, idxs)
+      ::it.toArray()
+  ).toEqual([2, 4, 6])
+  expect(r).toBe(iter)
+  expect(idxs).toEqual([0, 1, 2, 3, 4, 5])
+})
+
+test('length', () => {
+  expect(it.length.name).toBe('length')
+  expect(it.length.length).toBe(0)
+  const a = it.range(10)::it.toArray()
+  expect(a::it.length()).toBe(10)
+  expect(a::it.iter()::it.length()).toBe(10)
+  expect('awd'::it.length()).toBe(3)
+  expect(new Set([1, 2, 3])::it.length()).toBe(3)
+  expect({}::it.length).toThrow
+  expect(it.range(10)::it.length()).toBe(10)
+})
