@@ -122,29 +122,25 @@ export function* filter(func, thisArg = void 0) {
 }
 
 export function* concat(...its) {
-  for (const item of no_closing(this)) {
-    yield item
-  }
+  yield* this
   for (const it of its) {
-    if (it::isInstanceOf(...CommonCollections) || it::isIterator())
-      for (const item of no_closing(it)) {
-        yield item
-      }
-    else yield it
+    if (it::isInstanceOf(...CommonCollections) || it::isIterator()) {
+      yield* it
+    } else {
+      yield it
+    }
   }
 }
 
 export function* concatFront(...its) {
   for (const it of its) {
-    if (it::isInstanceOf(...CommonCollections) || it::isIterator())
-      for (const item of no_closing(it)) {
-        yield item
-      }
-    else yield it
+    if (it::isInstanceOf(...CommonCollections) || it::isIterator()) {
+      yield* it
+    } else {
+      yield it
+    }
   }
-  for (const item of no_closing(this)) {
-    yield item
-  }
+  yield* this
 }
 
 export function next() {
@@ -279,10 +275,10 @@ export function* flat(depth = 1) {
       !depth::sameValueZero(0) &&
       (item::isInstanceOf(...CommonCollections) || item::isIterator())
     ) {
-      for (const subitem of item::flat(depth - 1)) {
-        yield subitem
-      }
-    } else yield item
+      yield* item::flat(depth - 1)
+    } else {
+      yield item
+    }
   }
 }
 
@@ -367,10 +363,7 @@ export function* chunk(size) {
   size = size ?? 1
   const it = this::iter()
   let chunk
-  while ((chunk = it::take(size)::toArray()).length::is(size)) {
-    yield chunk
-  }
-  if (chunk.length) {
+  while ((chunk = it::take(size)::toArray()).length) {
     yield chunk
   }
 }
