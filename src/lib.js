@@ -469,3 +469,12 @@ export function enumerate() {
 export function unzip() {
   return zip(...this)
 }
+
+export function* splice(start, deleteCount, ...newItems) {
+  const it = this::iter()
+  yield* it::take(start)
+  yield* newItems
+  if (!deleteCount::isNullish()) {
+    yield* it::drop(deleteCount)
+  }
+}

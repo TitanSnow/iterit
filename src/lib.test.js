@@ -1077,3 +1077,21 @@ test('unzip', () => {
     [true, false]
   ])
 })
+
+test('splice', () => {
+  expect(it.splice.name).toBe('splice')
+  expect(it.splice.length).toBe(2)
+  const a = it.range(5)::it.toArray()
+  expect(a::it.splice(0)::it.toArray()).toEqual([])
+  expect(a::it.splice(1)::it.toArray()).toEqual([0])
+  expect(a::it.splice(1, 0)::it.toArray()).toEqual([0, 1, 2, 3, 4])
+  expect(a::it.splice(1, 3)::it.toArray()).toEqual([0, 4])
+  expect(a::it.splice(1, 3, 5, 6, 7, 8)::it.toArray()).toEqual([
+    0,
+    5,
+    6,
+    7,
+    8,
+    4
+  ])
+})
