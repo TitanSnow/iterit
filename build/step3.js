@@ -19,35 +19,40 @@ function decorateMeta(func, name, length) {
   return func
 }
 
-function decorateToFsharp(func, name, length) {
+function decorateToFsharp(func) {
   return decorateMeta(
     (...args) => subject => func.apply(subject, args),
-    name,
-    length
+    func.name,
+    func.length
   )
 }
 
-function decorateToSmart(func, name, length) {
+function decorateToSmart(func) {
   return decorateMeta(
     (subject, ...args) => func.apply(subject, args),
-    name,
-    length
+    func.name,
+    func.length + 1
   )
 }
 
 async function genFsharp(funcs) {
   const f = fs.createWriteStream('lib/fsharp.mjs')
-  const fw = promisify(f.write.bind(f))
-  await fw("import * as it from './lib.mjs'\n\n")
+  await promisify(f.write.bind(f))("import * as it from './lib.mjs'\n\n")
+  const fmin = fs.createWriteStream('lib/fsharp.min.mjs')
+  await promisify(fmin.write.bind(fmin))(
+    "import * as it from './lib.min.mjs'\n\n"
+  )
+  async function fw(s) {
+    const a = promisify(f.write.bind(f))(s)
+    const b = promisify(fmin.write.bind(fmin))(s)
+    await a
+    await b
+  }
   await fw(decorateMeta.toString() + '\n\n')
   await fw(decorateToFsharp.toString() + '\n\n')
-  for (const [name, meta] of Object.entries(funcs)) {
-    if (meta.needCurry) {
-      await fw(
-        `export const ${name} = decorateToFsharp(it.${name}, '${name}', ${
-          meta.length
-        })\n`
-      )
+  for (const [name, needCurry] of Object.entries(funcs)) {
+    if (needCurry) {
+      await fw(`export const ${name} = decorateToFsharp(it.${name})\n`)
     } else {
       await fw(`export const ${name} = it.${name}\n`)
     }
@@ -56,16 +61,22 @@ async function genFsharp(funcs) {
 
 async function genSmart(funcs) {
   const f = fs.createWriteStream('lib/smart.mjs')
-  const fw = promisify(f.write.bind(f))
-  await fw("import * as it from './lib.mjs'\n\n")
+  await promisify(f.write.bind(f))("import * as it from './lib.mjs'\n\n")
+  const fmin = fs.createWriteStream('lib/smart.min.mjs')
+  await promisify(fmin.write.bind(fmin))(
+    "import * as it from './lib.min.mjs'\n\n"
+  )
+  async function fw(s) {
+    const a = promisify(f.write.bind(f))(s)
+    const b = promisify(fmin.write.bind(fmin))(s)
+    await a
+    await b
+  }
   await fw(decorateMeta.toString() + '\n\n')
   await fw(decorateToSmart.toString() + '\n\n')
-  for (const [name, meta] of Object.entries(funcs)) {
-    if (meta.needCurry) {
-      await fw(
-        `export const ${name} = decorateToSmart(it.${name}, '${name}', ${meta.length +
-          1})\n`
-      )
+  for (const [name, needCurry] of Object.entries(funcs)) {
+    if (needCurry) {
+      await fw(`export const ${name} = decorateToSmart(it.${name})\n`)
     } else {
       await fw(`export const ${name} = it.${name}\n`)
     }
