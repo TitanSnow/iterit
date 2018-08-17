@@ -529,7 +529,7 @@ export function partition(func, thisArg = void 0) {
   const it = this::iter()
   function* f() {
     while (true) {
-      if (r[this].length) yield r[this].splice(0, 1)[0]
+      if (r[this].length) yield r[this].shift()
       else {
         let nxt
         while (true) {
