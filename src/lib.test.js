@@ -219,7 +219,7 @@ test('keys', () => {
   expect(it.keys.length).toBe(0)
   const o = { awd: 'dwa', def: 'ccc' }
   expect(o::it.keys()::it.isIterator()).toBe(true)
-  expect([...o::it.keys()]::it.sort()).toEqual(['awd', 'def']::it.sort())
+  expect([...o::it.keys()]).toEqual(['awd', 'def'])
   const a = [1, 2, 3]
   expect(a::it.keys()::it.isIterator()).toBe(true)
   expect([...a::it.keys()]).toEqual([0, 1, 2])
@@ -227,12 +227,10 @@ test('keys', () => {
   const m = new Map([['awd', 'dwa'], ['def', 'ccc'], [sb, 'zzz']])
   expect(m::it.keys()::it.isIterator()).toBe(true)
   const cp = o => o.toString()
-  expect([...m::it.keys()]::it.sort(cp)).toEqual(
-    ['awd', 'def', sb]::it.sort(cp)
-  )
+  expect([...m::it.keys()]).toEqual(['awd', 'def', sb])
   const s = new Set(a)
   expect(s::it.keys()::it.isIterator()).toBe(true)
-  expect([...s::it.keys()]::it.sort()).toEqual([1, 2, 3]::it.sort())
+  expect([...s::it.keys()]).toEqual([1, 2, 3])
   expect(1::it.keys).toThrow()
   expect(sb::it.keys).toThrow()
 })
@@ -242,7 +240,7 @@ test('values', () => {
   expect(it.values.length).toBe(0)
   const o = { awd: 'dwa', def: 'ccc' }
   expect(o::it.values()::it.isIterator()).toBe(true)
-  expect([...o::it.values()]::it.sort()).toEqual(['dwa', 'ccc']::it.sort())
+  expect([...o::it.values()]).toEqual(['dwa', 'ccc'])
   const a = [1, 2, 3]
   expect(a::it.values()::it.isIterator()).toBe(true)
   expect([...a::it.values()]).toEqual([1, 2, 3])
@@ -250,12 +248,10 @@ test('values', () => {
   const m = new Map([['awd', 'dwa'], ['def', 'ccc'], [sb, 'zzz']])
   expect(m::it.values()::it.isIterator()).toBe(true)
   const cp = o => o.toString()
-  expect([...m::it.values()]::it.sort(cp)).toEqual(
-    ['dwa', 'ccc', 'zzz']::it.sort(cp)
-  )
+  expect([...m::it.values()]).toEqual(['dwa', 'ccc', 'zzz'])
   const s = new Set(a)
   expect(s::it.values()::it.isIterator()).toBe(true)
-  expect([...s::it.values()]::it.sort()).toEqual([1, 2, 3]::it.sort())
+  expect([...s::it.values()]).toEqual([1, 2, 3])
   expect(1::it.values).toThrow()
   expect(sb::it.values).toThrow()
 })
@@ -265,9 +261,7 @@ test('entries', () => {
   expect(it.entries.length).toBe(0)
   const o = { awd: 'dwa', def: 'ccc' }
   expect(o::it.entries()::it.isIterator()).toBe(true)
-  expect([...o::it.entries()]::it.sort()).toEqual(
-    [['awd', 'dwa'], ['def', 'ccc']]::it.sort()
-  )
+  expect([...o::it.entries()]).toEqual([['awd', 'dwa'], ['def', 'ccc']])
   const a = [1, 2, 3]
   expect(a::it.entries()::it.isIterator()).toBe(true)
   expect([...a::it.entries()]).toEqual([[0, 1], [1, 2], [2, 3]])
@@ -275,14 +269,14 @@ test('entries', () => {
   const m = new Map([['awd', 'dwa'], ['def', 'ccc'], [sb, 'zzz']])
   expect(m::it.entries()::it.isIterator()).toBe(true)
   const cp = o => o.toString()
-  expect([...m::it.entries()]::it.sort(cp)).toEqual(
-    [['awd', 'dwa'], ['def', 'ccc'], [sb, 'zzz']]::it.sort(cp)
-  )
+  expect([...m::it.entries()]).toEqual([
+    ['awd', 'dwa'],
+    ['def', 'ccc'],
+    [sb, 'zzz']
+  ])
   const s = new Set(a)
   expect(s::it.entries()::it.isIterator()).toBe(true)
-  expect([...s::it.entries()]::it.sort()).toEqual(
-    [[1, 1], [2, 2], [3, 3]]::it.sort()
-  )
+  expect([...s::it.entries()]).toEqual([[1, 1], [2, 2], [3, 3]])
   expect(1::it.entries).toThrow()
   expect(sb::it.entries).toThrow()
 })
@@ -823,14 +817,14 @@ test('toArray', () => {
   expect('𠮷'::it.toArray()).toEqual(['𠮷'])
 })
 
-test('sort', () => {
-  expect(it.sort.name).toBe('sort')
-  expect(it.sort.length).toBe(0)
-  const a = [4, 3, 5, 2, 1]
-  expect(a::it.sort()).toEqual([1, 2, 3, 4, 5])
-  expect(a).toEqual([4, 3, 5, 2, 1])
-  expect(a::it.sort((a, b) => a < b)).toEqual([5, 4, 3, 2, 1])
-})
+// test('sort', () => {
+//   expect(it.sort.name).toBe('sort')
+//   expect(it.sort.length).toBe(0)
+//   const a = [4, 3, 5, 2, 1]
+//   expect(a::it.sort()).toEqual([1, 2, 3, 4, 5])
+//   expect(a).toEqual([4, 3, 5, 2, 1])
+//   expect(a::it.sort((a, b) => a < b)).toEqual([5, 4, 3, 2, 1])
+// })
 
 test('chunk', () => {
   expect(it.chunk.name).toBe('chunk')

@@ -349,11 +349,12 @@ export function slice(begin, end) {
   return this::piece(begin, end)
 }
 
-export function sort(compareFn = void 0) {
-  const r = [...this]
-  r.sort(compareFn)
-  return r
-}
+// I dislike this
+// export function sort(compareFn = void 0) {
+//   const r = [...this]
+//   r.sort(compareFn)
+//   return r
+// }
 
 export function toArray() {
   return [...this]
