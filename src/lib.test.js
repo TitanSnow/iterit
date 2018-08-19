@@ -1,4 +1,5 @@
 import * as it from './lib'
+import shuffle from 'lodash.shuffle'
 
 test('index', () => {
   expect(it.index.name).toBe('index')
@@ -466,11 +467,11 @@ test('range', () => {
   expect(it.range(2, 8, -2)::it.toArray()).toEqual([])
 })
 
-test('repeat', () => {
-  expect(it.repeat.name).toBe('repeat')
-  expect(it.repeat.length).toBe(1)
+test('loop', () => {
+  expect(it.loop.name).toBe('loop')
+  expect(it.loop.length).toBe(1)
   let times = 0
-  ;(() => ++times)::it.repeat(5)
+  ;(() => ++times)::it.loop(5)
   expect(times).toBe(5)
 })
 
@@ -1200,4 +1201,111 @@ test('length', () => {
   expect(new Set([1, 2, 3])::it.length()).toBe(3)
   expect({}::it.length).toThrow
   expect(it.range(10)::it.length()).toBe(10)
+})
+
+test('repeat', () => {
+  expect(it.repeat.name).toBe('repeat')
+  expect(it.repeat.length).toBe(1)
+  expect(
+    it
+      .range(5)
+      ::it.repeat(2)
+      ::it.toArray()
+  ).toEqual([]::it.concat(it.range(5), it.range(5))::it.toArray())
+  expect([0, 1, 2, 3, 4]::it.repeat(2)::it.toArray()).toEqual(
+    []::it.concat(it.range(5), it.range(5))::it.toArray()
+  )
+  expect(
+    it
+      .range(5)
+      ::it.repeat()
+      ::it.take(20)
+      ::it.toArray()
+  ).toEqual(
+    []
+      ::it.concat(it.range(5), it.range(5), it.range(5), it.range(5))
+      ::it.toArray()
+  )
+  expect(
+    it
+      .range(5)
+      ::it.repeat(0)
+      ::it.toArray()
+  ).toEqual([])
+  expect(0::it.repeat(5)::it.toArray()).toEqual(Array(5).fill(0))
+  expect('awd'::it.repeat(5)::it.toArray()).toEqual(Array(5).fill('awd'))
+})
+
+test('tee', () => {
+  expect(it.tee.name).toBe('tee')
+  expect(it.tee.length).toBe(0)
+
+  const n = 200
+  let a, b, c, d
+  ;[a, b] = []::it.tee() // test empty iterator
+  expect(a::it.toArray()).toEqual([])
+  expect(b::it.toArray()).toEqual([])
+  ;[a, b] = it.range(n)::it.tee() // test 100% interleaved
+  expect(null::it.zip(a, b)::it.toArray()).toEqual(
+    [it.range(n)::it.toArray(), it.range(n)::it.toArray()]
+      ::it.unzip()
+      ::it.toArray()
+  )
+  ;[a, b] = it.range(n)::it.tee() // test 0% interleaved
+  expect(a::it.toArray()).toEqual(it.range(n)::it.toArray())
+  expect(b::it.toArray()).toEqual(it.range(n)::it.toArray())
+  ;[a, b] = it.range(n)::it.tee() // test dealloc of leading iterator
+  for (const i of it.range(100)) expect(a::it.firstItem()).toBe(i)
+  a = void 0
+  expect(b::it.toArray()).toEqual(it.range(n)::it.toArray())
+  ;[a, b] = it.range(n)::it.tee() // test dealloc of trailing iterator
+  for (const i of it.range(100)) expect(a::it.firstItem()).toBe(i)
+  b = void 0
+  expect(a::it.toArray()).toEqual(it.range(100, n)::it.toArray())
+
+  for (const j of it.range(5)) {
+    // test randomly interleaved
+    const order = shuffle(
+      Array(2 * n)
+        .fill(0, 0, n)
+        .fill(1, n)
+    )
+    const lists = [[], []]
+    const its = it.range(n)::it.tee()
+    for (const i of order) {
+      const value = its[i]::it.firstItem()
+      lists[i].push(value)
+    }
+    expect(lists[0]).toEqual(it.range(n)::it.toArray())
+    expect(lists[1]).toEqual(it.range(n)::it.toArray())
+  }
+
+  // test long-lagged and multi-way split
+  ;[a, b, c] = it.range(2000)::it.tee(3)
+  for (const i of it.range(100)) expect(a::it.firstItem()).toBe(i)
+  expect(b::it.toArray()).toEqual(it.range(2000)::it.toArray())
+  expect([c::it.firstItem(), c::it.firstItem()]).toEqual(
+    it.range(2)::it.toArray()
+  )
+  expect(a::it.toArray()).toEqual(it.range(100, 2000)::it.toArray())
+  expect(c::it.toArray()).toEqual(it.range(2, 2000)::it.toArray())
+
+  // test values of n
+  for (const n of it.range(5)) {
+    const result = 'abc'::it.tee(n)
+    expect(Array.isArray(result)).toBe(true)
+    expect(result.length).toBe(n)
+    expect(result::it.map(o => o::it.toArray())::it.toArray()).toEqual(
+      Array(n).fill([...'abc'])
+    )
+  }
+
+  // tee pass-through to copyable iterator
+  ;[a, b] = 'abc'::it.tee()
+  ;a::it.firstItem()
+  ;[c, d] = a::it.tee()
+  ;a::it.firstItem()
+  expect(a).toBe(c)
+  expect(d::it.toArray()).toEqual(['b', 'c'])
+  expect(d::it.tee(0)).toEqual([])
 })

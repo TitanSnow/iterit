@@ -182,7 +182,7 @@ Object.defineProperty(
   Object.assign(Object.getOwnPropertyDescriptor(range, 'length'), { value: 1 })
 )
 
-export function repeat(times) {
+export function loop(times) {
   for (const i of range(times)) {
     this()
   }
@@ -196,7 +196,7 @@ export function times(func) {
 
 export function drop(n = 1) {
   const it = this::iter()
-  ;it::next::repeat(n)
+  ;it::next::loop(n)
   return it
 }
 
@@ -558,4 +558,62 @@ export function length() {
   let len = 0
   ;this::forEach(() => ++len)
   return len
+}
+
+export function* repeat(times) {
+  times = times ?? 1 / 0
+  const it =
+    this::isInstanceOf(...CommonCollections) || this::isIterator()
+      ? this
+      : [this]
+  const chunk = it::toArray()
+  for (const i of range(times)) yield* chunk
+}
+
+const teeSymbol = Symbol('tee')
+export function tee(n = 2) {
+  if (this.hasOwnProperty(teeSymbol)) {
+    return this[teeSymbol](n)
+  }
+  let start = 0
+  const data = []
+  const starts = Array(n).fill(0)
+  const it = this::iter()
+  function* teeGenerator(idx) {
+    while (true) {
+      if (starts[idx] === start + data.length) {
+        const nxt = it.next()
+        if (nxt.done) return
+        data.push(nxt.value)
+        ++starts[idx]
+        yield nxt.value
+      } else {
+        const item = data[starts[idx]++ - start]
+        if (!starts.includes(start)) {
+          data.shift()
+          ++start
+        }
+        yield item
+      }
+    }
+  }
+  function genTee(idx) {
+    const gen = teeGenerator(idx)
+    gen[teeSymbol] = reTee(idx)
+    return gen
+  }
+  function reTee(idx) {
+    return function(n) {
+      if (n::sameValueZero(0)) return []
+      const startIdx = starts.length
+      starts.push(...Array(n - 1).fill(starts[idx]))
+      return range(startIdx, startIdx + n - 1)
+        ::map(genTee)
+        ::concatFront([this])
+        ::toArray()
+    }
+  }
+  return range(n)
+    ::map(genTee)
+    ::toArray()
 }
