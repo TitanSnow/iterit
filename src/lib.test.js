@@ -1203,22 +1203,22 @@ test('length', () => {
   expect(it.range(10)::it.length()).toBe(10)
 })
 
-test('repeat', () => {
-  expect(it.repeat.name).toBe('repeat')
-  expect(it.repeat.length).toBe(1)
+test('cycle', () => {
+  expect(it.cycle.name).toBe('cycle')
+  expect(it.cycle.length).toBe(0)
   expect(
     it
       .range(5)
-      ::it.repeat(2)
+      ::it.cycle(2)
       ::it.toArray()
   ).toEqual([]::it.concat(it.range(5), it.range(5))::it.toArray())
-  expect([0, 1, 2, 3, 4]::it.repeat(2)::it.toArray()).toEqual(
+  expect([0, 1, 2, 3, 4]::it.cycle(2)::it.toArray()).toEqual(
     []::it.concat(it.range(5), it.range(5))::it.toArray()
   )
   expect(
     it
       .range(5)
-      ::it.repeat()
+      ::it.cycle()
       ::it.take(20)
       ::it.toArray()
   ).toEqual(
@@ -1229,11 +1229,9 @@ test('repeat', () => {
   expect(
     it
       .range(5)
-      ::it.repeat(0)
+      ::it.cycle(0)
       ::it.toArray()
   ).toEqual([])
-  expect(0::it.repeat(5)::it.toArray()).toEqual(Array(5).fill(0))
-  expect('awd'::it.repeat(5)::it.toArray()).toEqual(Array(5).fill('awd'))
 })
 
 test('tee', () => {
@@ -1309,3 +1307,136 @@ test('tee', () => {
   expect(d::it.toArray()).toEqual(['b', 'c'])
   expect(d::it.tee(0)).toEqual([])
 })
+
+test('repeat', () => {
+  expect(it.repeat.name).toBe('repeat')
+  expect(it.repeat.length).toBe(1)
+  expect(it.repeat('a', 3)::it.toArray()).toEqual(['a', 'a', 'a'])
+  expect(null::it.zip(it.range(3), it.repeat('a'))::it.toArray()).toEqual([
+    [0, 'a'],
+    [1, 'a'],
+    [2, 'a']
+  ])
+  expect(it.repeat('a', 3)::it.toArray()).toEqual(['a', 'a', 'a'])
+  expect(
+    it
+      .repeat('a')
+      ::it.take(3)
+      ::it.toArray()
+  ).toEqual(['a', 'a', 'a'])
+  expect(it.repeat('a', 0)::it.toArray()).toEqual([])
+})
+
+test('accumulate', () => {
+  expect(it.accumulate.name).toBe('accumulate')
+  expect(it.accumulate.length).toBe(0)
+  expect(
+    it
+      .range(10)
+      ::it.accumulate()
+      ::it.toArray()
+  ).toEqual([0, 1, 3, 6, 10, 15, 21, 28, 36, 45]) // one positional arg
+  expect('abc'::it.accumulate()::it.toArray()).toEqual(['a', 'ab', 'abc']) // works with non-numeric
+  expect([]::it.accumulate()::it.toArray()).toEqual([]) // empty iterable
+  expect([7]::it.accumulate()::it.toArray()).toEqual([7]) // iterable of length one
+
+  const s = [2, 8, 9, 5, 7, 0, 3, 4, 1, 6]
+  expect(s::it.accumulate(Math.min)::it.toArray()).toEqual([
+    2,
+    2,
+    2,
+    2,
+    2,
+    0,
+    0,
+    0,
+    0,
+    0
+  ])
+  expect(s::it.accumulate(Math.max)::it.toArray()).toEqual([
+    2,
+    8,
+    9,
+    9,
+    9,
+    9,
+    9,
+    9,
+    9,
+    9
+  ])
+  expect(s::it.accumulate((a, b) => a * b)::it.toArray()).toEqual([
+    2,
+    16,
+    144,
+    720,
+    5040,
+    0,
+    0,
+    0,
+    0,
+    0
+  ])
+})
+
+test('compress', () => {
+  expect(it.compress.name).toBe('compress')
+  expect(it.compress.length).toBe(1)
+
+  expect('ABCDEF'::it.compress([1, 0, 1, 0, 1, 1])::it.join('')).toBe('ACEF')
+  expect('ABCDEF'::it.compress([1, 0, 1, 0, 1, 1])::it.join('')).toBe('ACEF')
+  expect('ABCDEF'::it.compress([0, 0, 0, 0, 0, 0])::it.join('')).toBe('')
+  expect('ABCDEF'::it.compress([1, 1, 1, 1, 1, 1])::it.join('')).toBe('ABCDEF')
+  expect('ABCDEF'::it.compress([1, 0, 1])::it.join('')).toBe('AC')
+  expect('ABC'::it.compress([0, 1, 1, 1, 1, 1])::it.join('')).toBe('BC')
+  const n = 10000
+  const data = it.range(6)::it.cycle(n)
+  const selectors = [0, 1]::it.cycle()
+  expect(data::it.compress(selectors)::it.toArray()).toEqual(
+    [1, 3, 5]::it.cycle(n)::it.toArray()
+  )
+})
+
+test('spreadMap', () => {
+  expect(it.spreadMap.name).toBe('spreadMap')
+  expect(it.spreadMap.length).toBe(1)
+  expect(
+    null
+      ::it.zip(it.range(3), it.range(1, 7))
+      ::it.spreadMap(Math.pow)
+      ::it.toArray()
+  ).toEqual([0 ** 1, 1 ** 2, 2 ** 3])
+  expect(
+    null
+      ::it.zip(it.count(), it.count(1))
+      ::it.spreadMap(Math.pow)
+      ::it.take(3)
+      ::it.toArray()
+  ).toEqual([0 ** 1, 1 ** 2, 2 ** 3])
+  expect([]::it.spreadMap(Math.pow)::it.toArray()).toEqual([])
+  expect([[4, 5]::it.iter()]::it.spreadMap(Math.pow)::it.toArray()).toEqual([
+    4 ** 5
+  ])
+})
+
+// test('product', () => {
+//   expect(it.product.name).toBe('product')
+//   expect(it.product.length).toBe(0)
+//   for (const [args, result] of [
+//     [[], [[]]], // zero iterables
+//     [['ab'], [['a'], ['b']]], // one iterable
+//     [
+//       [it.range(2), it.range(3)],
+//       [[0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2]]
+//     ], // two iterables
+//     [[it.range(0), it.range(2), it.range(3)], []], // first iterable with zero length
+//     [[it.range(2), it.range(0), it.range(3)], []], // middle iterable with zero length
+//     [[it.range(2), it.range(3), it.range(0)], []] // last iterable with zero length
+//   ]) {
+//     expect(null::it.product(...args)::it.toArray()).toEqual(result)
+//     for (const r of it.range(4))
+//       expect(null::it.product(...args::it.cycle(r))).toEqual(
+//         null::it.product(...args, r)
+//       )
+//   }
+// })

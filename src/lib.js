@@ -560,14 +560,13 @@ export function length() {
   return len
 }
 
-export function* repeat(times) {
-  times = times ?? 1 / 0
-  const it =
-    this::isInstanceOf(...CommonCollections) || this::isIterator()
-      ? this
-      : [this]
-  const chunk = it::toArray()
+export function* cycle(times = 1 / 0) {
+  const chunk = this::toArray()
   for (const i of range(times)) yield* chunk
+}
+
+export const repeat = (elem, times = 1 / 0) => {
+  return [elem]::cycle(times)
 }
 
 const teeSymbol = Symbol('tee')
@@ -616,4 +615,26 @@ export function tee(n = 2) {
   return range(n)
     ::map(genTee)
     ::toArray()
+}
+
+export function* accumulate(func = (a, b) => a + b) {
+  const it = this::iter()
+  const fst = it.next()
+  if (fst.done) return
+  let total = fst.value
+  yield total
+  for (const element of no_closing(it)) {
+    total = func(total, element)
+    yield total
+  }
+}
+
+export function compress(selectors) {
+  return this::zip(selectors)
+    ::filter(([d, s]) => s)
+    ::map(([d]) => d)
+}
+
+export function spreadMap(func) {
+  return this::map(elem => func(...elem))
 }
