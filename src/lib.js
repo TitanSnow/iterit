@@ -638,3 +638,7 @@ export function compress(selectors) {
 export function spreadMap(func) {
   return this::map(elem => func(...elem))
 }
+
+export function sum() {
+  return this::reduce((a, b) => a + b)
+}

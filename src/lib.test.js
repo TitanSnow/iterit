@@ -1440,3 +1440,9 @@ test('spreadMap', () => {
 //       )
 //   }
 // })
+
+test('sum', () => {
+  expect(it.sum.name).toBe('sum')
+  expect(it.sum.length).toBe(0)
+  expect(it.range(101)::it.sum()).toBe(5050)
+})
