@@ -1,4 +1,4 @@
-export function index(key) {
+export function index(key: any): any {
   return this[key]
 }
 

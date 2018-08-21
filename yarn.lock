@@ -317,6 +317,12 @@
   dependencies:
     "@babel/helper-plugin-utils" "7.0.0-rc.1"
 
+"@babel/plugin-syntax-typescript@^7.0.0-rc.1":
+  version "7.0.0-rc.1"
+  resolved "http://registry.npm.taobao.org/@babel/plugin-syntax-typescript/download/@babel/plugin-syntax-typescript-7.0.0-rc.1.tgz#f1e0afa67b62aa9659cf9995a8a46f0638faa05f"
+  dependencies:
+    "@babel/helper-plugin-utils" "7.0.0-rc.1"
+
 "@babel/plugin-transform-arrow-functions@7.0.0-rc.1":
   version "7.0.0-rc.1"
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-arrow-functions/-/plugin-transform-arrow-functions-7.0.0-rc.1.tgz#95b369e6ded8425a00464609d29e1fd017b331b0"
@@ -4224,6 +4230,10 @@ type-check@~0.3.2:
   resolved "https://registry.yarnpkg.com/type-check/-/type-check-0.3.2.tgz#5884cab512cf1d355e3fb784f30804b2b520db72"
   dependencies:
     prelude-ls "~1.1.2"
+
+typescript@^3.0.1:
+  version "3.0.1"
+  resolved "http://registry.npm.taobao.org/typescript/download/typescript-3.0.1.tgz#43738f29585d3a87575520a4b93ab6026ef11fdb"
 
 uglify-js@^2.6:
   version "2.8.29"
