@@ -83,10 +83,35 @@ async function genSmart(funcs) {
   }
 }
 
+async function genInjure(funcs) {
+  const f = fs.createWriteStream('lib/injure.mjs')
+  await promisify(f.write.bind(f))("import * as it from './lib.mjs'\n\n")
+  const fmin = fs.createWriteStream('lib/injure.min.mjs')
+  await promisify(fmin.write.bind(fmin))(
+    "import * as it from './lib.min.mjs'\n\n"
+  )
+  async function fw(s) {
+    const a = promisify(f.write.bind(f))(s)
+    const b = promisify(fmin.write.bind(fmin))(s)
+    await a
+    await b
+  }
+  for (const [name, needCurry] of Object.entries(funcs)) {
+    if (needCurry) {
+      await fw(
+        `export const ${name} = Symbol('${name}')\nObject.prototype[${name}] = it.${name}\n`
+      )
+    } else {
+      await fw(`export const ${name} = it.${name}\n`)
+    }
+  }
+}
+
 ;(async function() {
   const funcs = JSON.parse(
     await promisify(fs.readFile)('temp/funcs.json', { encoding: 'utf8' })
   )
   genFsharp(funcs)
   genSmart(funcs)
+  genInjure(funcs)
 })()
