@@ -2,8 +2,8 @@ export function index(key) {
   return this[key]
 }
 
-export function bind(obj) {
-  return this.bind(obj)
+export function bind(thisArg, ...args) {
+  return this.bind(thisArg, ...args)
 }
 
 export function getBound(key) {
