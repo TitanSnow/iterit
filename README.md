@@ -1,6 +1,11 @@
 # iterit
 Itertools for Future ECMAScript
 
+[![build](https://flat.badgen.net/travis/TitanSnow/iterit?icon=travis&label=build)](https://travis-ci.org/TitanSnow/iterit)
+[![coverage](https://flat.badgen.net/codecov/c/github/TitanSnow/iterit?icon=codecov)](https://codecov.io/gh/TitanSnow/iterit)
+[![version](https://flat.badgen.net/npm/v/iterit?icon=npm&label=version)](https://www.npmjs.com/package/iterit)
+[![license](https://flat.badgen.net/npm/license/iterit)](LICENSE)
+
 ## Installation
 ```console
 $ npm i iterit      # or
