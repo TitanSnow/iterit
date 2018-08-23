@@ -1299,13 +1299,21 @@ test('tee', () => {
   }
 
   // tee pass-through to copyable iterator
-  ;[a, b] = 'abc'::it.tee()
-  ;a::it.firstItem()
+  ;[a, b] = it.range(3)::it.tee()
+  expect(a::it.firstItem()).toBe(0)
   ;[c, d] = a::it.tee()
-  ;a::it.firstItem()
+  expect(a::it.firstItem()).toBe(1)
   expect(a).toBe(c)
-  expect(d::it.toArray()).toEqual(['b', 'c'])
+  expect(d::it.toArray()).toEqual([1, 2])
   expect(d::it.tee(0)).toEqual([])
+
+  // tee Array
+  expect(
+    [1, 2, 3, 4, 5]
+      ::it.tee()
+      ::it.unzip()
+      ::it.toArray()
+  ).toEqual([[1, 1], [2, 2], [3, 3], [4, 4], [5, 5]])
 })
 
 test('repeat', () => {

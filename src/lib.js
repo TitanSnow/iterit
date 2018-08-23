@@ -569,52 +569,45 @@ export const repeat = (elem, times = 1 / 0) => {
   return [elem]::cycle(times)
 }
 
+class List {
+  constructor(value) {
+    this.value = value
+    this.next = void 0
+  }
+}
+
 const teeSymbol = Symbol('tee')
 export function tee(n = 2) {
   if (this.hasOwnProperty(teeSymbol)) {
     return this[teeSymbol](n)
-  }
-  let start = 0
-  const data = []
-  const starts = Array(n).fill(0)
-  const it = this::iter()
-  function* teeGenerator(idx) {
-    while (true) {
-      if (starts[idx] === start + data.length) {
-        const nxt = it.next()
-        if (nxt.done) return
-        data.push(nxt.value)
-        ++starts[idx]
-        yield nxt.value
-      } else {
-        const item = data[starts[idx]++ - start]
-        if (!starts.includes(start)) {
-          data.shift()
-          ++start
+  } else if (this::iter()::is(this::iter())) {
+    const it = this::iter()
+    const genTee = list => {
+      const teeIter = (function*() {
+        while (true) {
+          if (list.next::is(void 0)) {
+            const { value, done } = it.next()
+            if (done) return
+            list.next = new List(value)
+          }
+          yield (list = list.next).value
         }
-        yield item
+      })()
+      teeIter[teeSymbol] = n => {
+        if (n === 0) return []
+        return [teeIter, ...range(n - 1)::map(() => genTee(list))]
       }
+      return teeIter
     }
+    return Array(n)
+      .fill(new List())
+      ::map(genTee)
+      ::toArray()
+  } else {
+    return range(n)
+      ::map(() => this::iter())
+      ::toArray()
   }
-  function genTee(idx) {
-    const gen = teeGenerator(idx)
-    gen[teeSymbol] = reTee(idx)
-    return gen
-  }
-  function reTee(idx) {
-    return function(n) {
-      if (n::sameValueZero(0)) return []
-      const startIdx = starts.length
-      starts.push(...Array(n - 1).fill(starts[idx]))
-      return range(startIdx, startIdx + n - 1)
-        ::map(genTee)
-        ::concatFront([this])
-        ::toArray()
-    }
-  }
-  return range(n)
-    ::map(genTee)
-    ::toArray()
 }
 
 export function* accumulate(func = (a, b) => a + b) {
