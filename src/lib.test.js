@@ -36,6 +36,13 @@ test('bind', () => {
   expect(f::it.bind(1)()).toBe(1)
   const o = {}
   expect(f::it.bind(o)()).toBe(o)
+  expect(((...args) => args)::it.bind(null, 1, 2, 3)(4, 5)).toEqual([
+    1,
+    2,
+    3,
+    4,
+    5
+  ])
 })
 
 test('getBound', () => {
