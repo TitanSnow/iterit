@@ -93,7 +93,10 @@ The API of iterit is designed to be more compatible with existed ECMAScript API 
 ```typescript
 Array<T>.forEach(callbackfn: (value: T, index: number, array: T[]) => void, thisArg?: any): void;
 
-it.forEach<T>(this: IterableIterator<T>, callbackfn: (value: T, index: number, iter: IterableIterator<T>) => void, thisArg?: any): void
+it.forEach<T>(
+  this: IterableIterator<T>,
+  callbackfn: (value: T, index: number, iter: IterableIterator<T>) => void,
+  thisArg?: any): void
 ```
 
 ### Find all [narcissistic numbers](https://en.wikipedia.org/wiki/Narcissistic_number)
